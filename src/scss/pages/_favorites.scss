@@ -1,0 +1,86 @@
+@use "../base/variables" as *;
+@use "../base/mixins" as *;
+@use "sass:color";
+
+.favorites {
+    padding: 4rem 0;
+
+    &__container {
+        max-width: $container-max-width;
+        margin: 0 auto;
+        padding: 0 $container-padding;
+    }
+
+    &__title {
+        font-size: 2rem;
+        color: $primary-color;
+        margin-bottom: 2rem;
+        text-align: center;
+        position: relative;
+
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background-color: $secondary-color;
+        }
+    }
+
+    &__empty {
+        text-align: center;
+        padding: 3rem 0;
+
+        p {
+            color: $gray-dark;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+    }
+
+    &__grid {
+        @include grid(auto-fill, 2rem);
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+
+        @include mq(sm) {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+    }
+}
+
+.favorite-button {
+    @include button-base;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 2px solid $gray-light;
+    background: none;
+    color: $text-color;
+
+    &:hover {
+        border-color: $primary-color;
+        color: $primary-color;
+    }
+
+    &--active {
+        border-color: $primary-color;
+        color: $primary-color;
+        background-color: color.adjust($primary-color, $alpha: -0.9);
+
+        &:hover {
+            background-color: color.adjust($primary-color, $alpha: -0.85);
+        }
+    }
+
+    i {
+        font-size: 1.2rem;
+    }
+
+    .favorite-count {
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+} 

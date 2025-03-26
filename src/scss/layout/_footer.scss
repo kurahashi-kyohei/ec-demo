@@ -1,0 +1,77 @@
+@use "../base/variables" as *;
+
+.footer {
+    background-color: $primary-color;
+    color: $white;
+    padding: 3rem 0;
+    text-align: center;
+
+    &__inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    &__content {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        margin-bottom: 3rem;
+
+        @media (max-width: $breakpoint-md) {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+    }
+
+    &__section {
+        &:first-child {
+            @media (max-width: $breakpoint-md) {
+                margin-bottom: 2rem;
+            }
+        }
+    }
+
+    &__title {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+
+    &__description {
+        line-height: 1.8;
+        opacity: 0.8;
+    }
+
+    &__list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        a {
+            color: $white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
+    &__bottom {
+        border-top: 1px solid rgba($white, 0.1);
+        padding-top: 2rem;
+        text-align: center;
+    }
+
+    &__copyright {
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+} 

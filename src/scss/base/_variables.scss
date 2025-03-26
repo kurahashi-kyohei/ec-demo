@@ -1,0 +1,74 @@
+// Colors
+$primary-color: #2c3e50;
+$secondary-color: #3498db;
+$text-color: #333;
+$white: #fff;
+$gray-light: #f8f9fa;
+$gray-dark: #343a40;
+$light-bg: #f8f9fa;
+
+// Border
+$border-radius: 8px;
+
+// Typography
+$font-family-base: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+$font-size-base: 1rem;
+$line-height-base: 1.6;
+
+// Layout
+$container-max-width: 1200px;
+$container-padding: 1rem;
+
+// Breakpoints
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+
+// カラーパレット
+:root {
+    // プライマリカラー
+    --color-primary: #2563eb;
+    --color-primary-light: #dbeafe;
+    --color-primary-dark: #1e40af;
+
+    // セカンダリカラー
+    --color-secondary: #475569;
+    --color-secondary-light: #f1f5f9;
+    --color-secondary-dark: #1e293b;
+
+    // アクセントカラー
+    --color-success: #16a34a;
+    --color-success-light: #dcfce7;
+    --color-danger: #dc2626;
+    --color-danger-light: #fee2e2;
+    --color-warning: #ca8a04;
+    --color-warning-light: #fef9c3;
+    --color-info: #0891b2;
+    --color-info-light: #cffafe;
+
+    // モノクロ
+    --color-white: #ffffff;
+    --color-background: #f8fafc;
+    --color-background-light: #f1f5f9;
+    --color-border: #e2e8f0;
+    --color-text: #0f172a;
+    --color-text-light: #64748b;
+
+    // レイアウト
+    --container-width: 1280px;
+    --container-padding: 1.5rem;
+    --border-radius: 0.5rem;
+    --border-radius-lg: 0.75rem;
+    --border-radius-sm: 0.25rem;
+
+    // シャドウ
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+    // アニメーション
+    --transition-base: all 0.2s ease;
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+} 

@@ -1,0 +1,126 @@
+@use "sass:color";
+@use "../base/variables" as *;
+
+.auth {
+    padding: 4rem $container-padding;
+
+    &__container {
+        max-width: 480px;
+        margin: 0 auto;
+        padding: 2rem;
+        background-color: $white;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    &__title {
+        font-size: 1.8rem;
+        color: $primary-color;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    &__form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    &__submit {
+        background-color: $secondary-color;
+        color: $white;
+        border: none;
+        padding: 1rem;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &:hover {
+            background-color: color.adjust($secondary-color, $lightness: -10%);
+        }
+    }
+
+    &__links {
+        text-align: right;
+        margin-top: -0.5rem;
+    }
+
+    &__forgot-link {
+        color: $gray-dark;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.3s;
+
+        &:hover {
+            color: $secondary-color;
+        }
+    }
+
+    &__register, &__login {
+        text-align: center;
+        margin-top: 1.5rem;
+        font-size: 0.95rem;
+
+        a {
+            color: $secondary-color;
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 0.3rem;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+.form-group {
+    &__label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: $gray-dark;
+        font-weight: 500;
+    }
+
+    &__input {
+        width: 100%;
+        padding: 0.8rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+
+        &:focus {
+            outline: none;
+            border-color: $secondary-color;
+        }
+    }
+
+    &__help {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+        color: $gray-dark;
+    }
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+
+    &--error {
+        background-color: #ffebee;
+        color: #d32f2f;
+        border: 1px solid #ffcdd2;
+    }
+
+    &--success {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        border: 1px solid #c8e6c9;
+    }
+} 

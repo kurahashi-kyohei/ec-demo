@@ -1,0 +1,122 @@
+<?php require __DIR__ . '/../../layout/admin/header.php'; ?>
+
+<div class="admin-order-detail">
+    <div class="admin-order-detail__container">
+        <div class="admin-order-detail__header">
+            <h1 class="admin-order-detail__title">注文詳細 #<?= $order['id'] ?></h1>
+            <a href="/admin/orders" class="button button--secondary">
+                <i class="fas fa-arrow-left"></i>
+                注文一覧に戻る
+            </a>
+        </div>
+
+        <div class="admin-order-detail__content">
+            <div class="order-info">
+                <h2 class="order-info__title">注文情報</h2>
+                <div class="order-info__grid">
+                    <div class="order-info__item">
+                        <span class="order-info__label">注文者</span>
+                        <span class="order-info__value"><?= htmlspecialchars($order['user_name']) ?></span>
+                    </div>
+                    <div class="order-info__item">
+                        <span class="order-info__label">メールアドレス</span>
+                        <span class="order-info__value"><?= htmlspecialchars($order['email']) ?></span>
+                    </div>
+                    <div class="order-info__item">
+                        <span class="order-info__label">注文日時</span>
+                        <span class="order-info__value"><?= date('Y/m/d H:i', strtotime($order['created_at'])) ?></span>
+                    </div>
+                    <div class="order-info__item">
+                        <span class="order-info__label">ステータス</span>
+                        <span class="order-info__value">
+                            <form action="/admin/orders/<?= $order['id'] ?>/status" method="post" class="status-form">
+                                <select name="status" class="status-form__select" onchange="this.form.submit()">
+                                    <option value="pending" <?= $order['status'] === 'pending' ? 'selected' : '' ?>>
+                                        未処理
+                                    </option>
+                                    <option value="processing" <?= $order['status'] === 'processing' ? 'selected' : '' ?>>
+                                        処理中
+                                    </option>
+                                    <option value="completed" <?= $order['status'] === 'completed' ? 'selected' : '' ?>>
+                                        完了
+                                    </option>
+                                    <option value="cancelled" <?= $order['status'] === 'cancelled' ? 'selected' : '' ?>>
+                                        キャンセル
+                                    </option>
+                                </select>
+                            </form>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="shipping-info">
+                <h2 class="shipping-info__title">配送情報</h2>
+                <div class="shipping-info__content">
+                    <div class="shipping-info__item">
+                        <span class="shipping-info__label">郵便番号</span>
+                        <span class="shipping-info__value"><?= htmlspecialchars($order['postal_code']) ?></span>
+                    </div>
+                    <div class="shipping-info__item">
+                        <span class="shipping-info__label">住所</span>
+                        <span class="shipping-info__value">
+                            <?= htmlspecialchars($order['address']) ?>
+                        </span>
+                    </div>
+                    <div class="shipping-info__item">
+                        <span class="shipping-info__label">電話番号</span>
+                        <span class="shipping-info__value"><?= htmlspecialchars($order['phone']) ?></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="order-items">
+                <h2 class="order-items__title">注文商品</h2>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>商品</th>
+                                <th>単価</th>
+                                <th>数量</th>
+                                <th>小計</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($order['items'] as $item): ?>
+                                <tr>
+                                    <td class="order-item">
+                                        <img src="<?= htmlspecialchars($item['image_path']) ?>" 
+                                             alt="<?= htmlspecialchars($item['name']) ?>"
+                                             class="order-item__image">
+                                        <span class="order-item__name">
+                                            <?= htmlspecialchars($item['name']) ?>
+                                        </span>
+                                    </td>
+                                    <td>¥<?= number_format($item['price']) ?></td>
+                                    <td><?= $item['quantity'] ?></td>
+                                    <td>¥<?= number_format($item['price'] * $item['quantity']) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-right">小計</td>
+                                <td>¥<?= number_format($order['subtotal']) ?></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="text-right">送料</td>
+                                <td>¥<?= number_format($order['shipping_fee']) ?></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="text-right">合計</td>
+                                <td class="total-amount">¥<?= number_format($order['total_amount']) ?></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

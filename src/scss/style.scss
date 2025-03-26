@@ -1,0 +1,138 @@
+@use "sass:color";
+
+// Base
+@use "base/variables";
+@use "base/reset";
+@use "base/layout";
+
+// Layout
+@use "layout/header";
+@use "layout/footer";
+@use "layout/admin-header";
+
+// Pages
+@use "pages/home";
+@use "pages/products";
+@use "pages/auth";
+@use "pages/mypage";
+@use "pages/cart";
+@use "pages/favorites";
+@use "pages/admin";
+@use "pages/admin-products";
+@use "pages/admin-users";
+@use "pages/admin-orders";
+@use "pages/error";
+
+// Components
+@use "components/product-thumbnail";
+
+// Variables
+$primary-color: #2c3e50;
+$secondary-color: #3498db;
+$text-color: #333;
+$white: #fff;
+
+body {
+    font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+    line-height: 1.6;
+    color: $text-color;
+}
+
+// Header
+.header {
+    background-color: $primary-color;
+    padding: 1rem 0;
+
+    &__inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    &__logo {
+        color: $white;
+        font-size: 1.5rem;
+    }
+
+    &__menu {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+
+        a {
+            color: $white;
+            text-decoration: none;
+            transition: color 0.3s;
+
+            &:hover {
+                color: $secondary-color;
+            }
+        }
+    }
+}
+
+// Hero Section
+.hero {
+    background-color: #f8f9fa;
+    padding: 4rem 0;
+    text-align: center;
+
+    &__inner {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    &__title {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: $primary-color;
+    }
+
+    &__text {
+        font-size: 1.2rem;
+        color: color.adjust($text-color, $lightness: 20%);
+    }
+}
+
+
+
+// 共通のユーティリティクラス
+.container {
+    max-width: variables.$container-max-width;
+    margin: 0 auto;
+    padding: 0 variables.$container-padding;
+}
+
+.text-center {
+    text-align: center;
+}
+
+// マージンユーティリティ
+@for $i from 1 through 5 {
+    .mt-#{$i} { margin-top: $i * 0.5rem; }
+    .mb-#{$i} { margin-bottom: $i * 0.5rem; }
+    .ml-#{$i} { margin-left: $i * 0.5rem; }
+    .mr-#{$i} { margin-right: $i * 0.5rem; }
+}
+
+// フレックスユーティリティ
+.d-flex {
+    display: flex;
+}
+
+.justify-content {
+    &-center { justify-content: center; }
+    &-between { justify-content: space-between; }
+    &-around { justify-content: space-around; }
+}
+
+.align-items {
+    &-center { align-items: center; }
+    &-start { align-items: flex-start; }
+    &-end { align-items: flex-end; }
+}
+
