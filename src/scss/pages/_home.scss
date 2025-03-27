@@ -106,7 +106,7 @@ $overlay-opacity: 0.6;
         color: #fff;
         
         &:hover {
-            background-color: darken(#3498db, 10%);
+            background-color: color.adjust(#3498db, $lightness: -10%);
             transform: translateY(-2px);
         }
     }
