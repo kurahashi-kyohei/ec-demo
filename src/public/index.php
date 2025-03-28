@@ -18,4 +18,22 @@ SessionMiddleware::start();
 $router = require __DIR__ . '/../Config/routes.php';
 
 // Run the router
-$router->run(); 
+$router->run();
+
+// URLルーティングの処理
+$request_uri = $_SERVER['REQUEST_URI'];
+$path = parse_url($request_uri, PHP_URL_PATH);
+
+// ルーティング設定
+switch ($path) {
+    case '/login':
+        require_once '../views/login.php';
+        break;
+    case '/products':
+        require_once '../views/products.php';
+        break;
+    default:
+        // ホームページまたは404ページ
+        require_once '../views/home.php';
+        break;
+} 
