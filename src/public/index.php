@@ -4,6 +4,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Dotenv\Dotenv;
 use App\Middleware\SessionMiddleware;
+use App\Config\Database;
 
 // Load environment variables
 if (file_exists(__DIR__ . '/.env')) {
@@ -39,13 +40,8 @@ switch ($path) {
 }
 
 try {
-    $pdo = new PDO(
-        "mysql:host=" . getenv('DB_HOST') . 
-        ";dbname=" . getenv('DB_DATABASE'),
-        getenv('DB_USERNAME'),
-        getenv('DB_PASSWORD')
-    );
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
+    $db = Database::getInstance();
+    $pdo = $db->getConnection();
+} catch(Exception $e) {
     echo "接続エラー: " . $e->getMessage();
 } 

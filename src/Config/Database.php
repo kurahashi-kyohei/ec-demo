@@ -11,10 +11,14 @@ class Database {
 
     private function __construct() {
         try {
+            // JawsDB URLから接続情報を取得
+            $url = parse_url(getenv("JAWSDB_URL"));
+            
             $this->connection = new PDO(
-                "mysql:host=" . $_ENV['DB_HOST'] . ";dbname=" . $_ENV['DB_NAME'],
-                $_ENV['DB_USER'],
-                $_ENV['DB_PASS'],
+                "mysql:host=" . $url["host"] . 
+                ";dbname=" . ltrim($url["path"], '/'),
+                $url["user"],
+                $url["pass"],
                 [
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
