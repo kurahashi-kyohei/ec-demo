@@ -1,4 +1,5 @@
 釣り具（ルアー）のECサイトです。
+URL: https://cryptic-anchorage-66912-5fa7249bc29d.herokuapp.com/
 
 ## 画面・機能説明
 
