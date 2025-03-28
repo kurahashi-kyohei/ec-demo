@@ -40,4 +40,13 @@ class Database {
     // シングルトンパターンを維持するためのメソッド
     private function __clone() {}
     public function __wakeup() {}
+
+    public function getDatabaseConfig() {
+        return [
+            'host' => $url["host"],
+            'database' => ltrim($url["path"], '/'),
+            'username' => $url["user"],
+            'password' => $url["pass"],
+        ];
+    }
 } 
