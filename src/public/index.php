@@ -6,7 +6,7 @@ use Dotenv\Dotenv;
 use App\Middleware\SessionMiddleware;
 
 // Load environment variables
-$dotenv = Dotenv::createImmutable(__DIR__ . '/../..');
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../../..');
 $dotenv->load();
 
 // Start session
