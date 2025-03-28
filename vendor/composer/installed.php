@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'keiry-lure/ec-site',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => null,
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '1b41a2735049532df1169367aec4d88351bd8570',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -29,9 +29,9 @@
             'dev_requirement' => false,
         ),
         'keiry-lure/ec-site' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => null,
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '1b41a2735049532df1169367aec4d88351bd8570',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
