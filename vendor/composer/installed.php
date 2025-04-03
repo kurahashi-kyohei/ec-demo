@@ -3,7 +3,7 @@
         'name' => 'keiry-lure/ec-site',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '1b41a2735049532df1169367aec4d88351bd8570',
+        'reference' => '921ee9d89bd68f1e32a448b1e2be971f512ff391',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -31,7 +31,7 @@
         'keiry-lure/ec-site' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '1b41a2735049532df1169367aec4d88351bd8570',
+            'reference' => '921ee9d89bd68f1e32a448b1e2be971f512ff391',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
