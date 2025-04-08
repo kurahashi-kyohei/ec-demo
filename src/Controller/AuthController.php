@@ -31,7 +31,7 @@ class AuthController {
 
     public function register() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /register');
+            require __DIR__ . '/../View/auth/register.php';
             return;
         }
 
@@ -39,30 +39,64 @@ class AuthController {
             'email' => filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL),
             'password' => $_POST['password'] ?? '',
             'first_name' => $_POST['first_name'] ?? '',
-            'last_name' => $_POST['last_name'] ?? ''
+            'last_name' => $_POST['last_name'] ?? '',
+            'phone_number' => $_POST['phone_number'] ?? '',
+            'address' => $_POST['address'] ?? ''
         ];
 
         // バリデーション
-        if (!$data['email'] || strlen($data['password']) < 8 || 
-            empty($data['first_name']) || empty($data['last_name'])) {
-            $_SESSION['error'] = '入力内容に誤りがあります。';
-            header('Location: /register');
-            return;
+        $errors = [];
+
+        if (!$data['email']) {
+            $errors[] = 'メールアドレスの形式が正しくありません。';
+        }
+
+        if (strlen($data['password']) < 8 || !preg_match('/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/', $data['password'])) {
+            $errors[] = 'パスワードは8文字以上で、文字と数字を含める必要があります。';
+        }
+
+        if (empty($data['first_name'])) {
+            $errors[] = '名を入力してください。';
+        }
+
+        if (empty($data['last_name'])) {
+            $errors[] = '姓を入力してください。';
+        }
+
+        if (empty($data['phone_number'])) {
+            $errors[] = '電話番号は必須です。';
+        } elseif (!preg_match('/^[0-9-]{10,}$/', str_replace('-', '', $data['phone_number']))) {
+            $errors[] = '正しい電話番号の形式で入力してください。';
         }
 
         // メールアドレスの重複チェック
         if ($this->userModel->findByEmail($data['email'])) {
-            $_SESSION['error'] = 'このメールアドレスは既に登録されています。';
-            header('Location: /register');
+            $errors[] = 'このメールアドレスは既に登録されています。';
+        }
+
+        if (!empty($errors)) {
+            $_SESSION['error'] = implode('<br>', $errors);
+            require __DIR__ . '/../View/auth/register.php';
             return;
         }
 
-        if ($this->userModel->create($data)) {
+        // ユーザー登録
+        $result = $this->userModel->create([
+            'email' => $data['email'],
+            'password' => password_hash($data['password'], PASSWORD_DEFAULT),
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'phone_number' => $data['phone_number'],
+            'address' => $data['address']
+        ]);
+
+        if ($result) {
             $_SESSION['success'] = '登録が完了しました。';
             header('Location: /login');
+            exit;
         } else {
             $_SESSION['error'] = '登録に失敗しました。';
-            header('Location: /register');
+            require __DIR__ . '/../View/auth/register.php';
         }
     }
 
@@ -82,6 +116,11 @@ class AuthController {
         }
 
         $user = $this->userModel->findByEmail($email);
+        if ($user['status'] === '無効') {
+            $_SESSION['error'] = 'このメールアドレスは無効です。';
+            header('Location: /login');
+            return;
+        }
         if ($user && $this->userModel->verifyPassword($password, $user['password'])) {
             SessionMiddleware::regenerate(); // セッションIDを再生成
             $_SESSION['user_id'] = $user['id'];

@@ -20,6 +20,16 @@
                 <input type="email" id="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required>
             </div>
 
+            <div class="form-group">
+                <label for="phone_number">電話番号</label>
+                <input type="phone_number" id="phone_number" name="phone_number" value="<?= htmlspecialchars($user['phone_number']) ?>" required>
+            </div>  
+
+            <div class="form-group">
+                <label for="address">住所</label>
+                <input type="address" id="address" name="address" value="<?= htmlspecialchars($user['address']) ?>" required>
+            </div>
+
             <div class="mypage__buttons">
                 <button type="submit" class="mypage__button">更新する</button>
                 <a href="/mypage" class="mypage__button mypage__button--danger">キャンセル</a>

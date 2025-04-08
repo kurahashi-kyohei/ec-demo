@@ -51,20 +51,20 @@ class UserController
     public function store()
     {
         $email = $_POST['email'] ?? '';
+        $phoneNumber = $_POST['phone_number'] ?? '';
+        $address = $_POST['address'] ?? '';
         $password = $_POST['password'] ?? '';
         $firstName = $_POST['first_name'] ?? '';
         $lastName = $_POST['last_name'] ?? '';
         $role = $_POST['role'] ?? 'user';
         $status = $_POST['status'] ?? 'active';
 
-        // バリデーション
         if (empty($email) || empty($password) || empty($firstName) || empty($lastName)) {
             $_SESSION['error'] = '必須項目を入力してください。';
             header('Location: /admin/users/create');
             exit();
         }
 
-        // メールアドレスの重複チェック
         if ($this->userModel->findByEmail($email)) {
             $_SESSION['error'] = 'このメールアドレスは既に使用されています。';
             header('Location: /admin/users/create');
@@ -74,6 +74,8 @@ class UserController
         $result = $this->userModel->create([
             'email' => $email,
             'password' => $password,
+            'phone_number' => $phoneNumber,
+            'address' => $address,
             'first_name' => $firstName,
             'last_name' => $lastName,
             'role' => $role,
@@ -123,9 +125,10 @@ class UserController
         $email = $_POST['email'] ?? '';
         $firstName = $_POST['first_name'] ?? '';
         $lastName = $_POST['last_name'] ?? '';
+        $phoneNumber = $_POST['phone_number'] ?? '';
+        $address = $_POST['address'] ?? '';
         $role = $_POST['role'] ?? 'user';
         $status = $_POST['status'] ?? 'active';
-        $password = $_POST['password'] ?? '';
 
         // バリデーション
         if (empty($email) || empty($firstName) || empty($lastName)) {
@@ -146,9 +149,10 @@ class UserController
             'email' => $email,
             'first_name' => $firstName,
             'last_name' => $lastName,
+            'phone_number' => $phoneNumber,
+            'address' => $address,
             'role' => $role,
             'status' => $status,
-            'password' => $password // パスワードが空の場合は更新されません
         ]);
 
         if ($result) {

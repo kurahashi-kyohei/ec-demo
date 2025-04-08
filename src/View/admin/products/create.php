@@ -71,4 +71,29 @@
             </div>
         </form>
     </div>
+
+    <div class="modal fade product-form" id="importCsvModal" tabindex="-1" aria-labelledby="importCsvModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="importCsvModalLabel">CSVインポート</h5>
+            </div>
+            <form action="/admin/products/import-csv" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="csv_file" class="form-label">CSVファイルを選択</label>
+                        <input type="file" class="form-control" id="csv_file" name="csv_file" accept=".csv" required>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                    <button type="submit" class="btn btn-primary">
+                        インポート
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 </div>

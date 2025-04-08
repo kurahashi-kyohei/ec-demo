@@ -14,74 +14,61 @@
         </div>
     </div>
 
-    <div class="admin-users__container">
-        <form action="/admin/users/update/<?= $user['id'] ?>" method="post" class="user-form">
-            <?php if (isset($error)): ?>
-                <div class="alert alert--error">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <?= htmlspecialchars($error) ?>
-                </div>
-            <?php endif; ?>
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert--error">
+            <?= htmlspecialchars($_SESSION['error']) ?>
+            <?php unset($_SESSION['error']); ?>
+        </div>
+    <?php endif; ?>
 
-            <div class="user-form__group">
-                <label for="email" class="user-form__label">メールアドレス</label>
-                <input type="email" id="email" name="email" class="user-form__input" 
-                       value="<?= htmlspecialchars($user['email']) ?>" required>
-            </div>
+    <form action="/admin/users/update/<?= $user['id'] ?>" method="post" class="user-form">
+        <div class="form-group">
+            <label for="email" class="form-group__label">メールアドレス</label>
+            <input type="email" id="email" name="email" class="form-group__input" 
+                   value="<?= htmlspecialchars($user['email']) ?>" required>
+        </div>
 
-            <div class="user-form__group">
-                <label for="password" class="user-form__label">
-                    パスワード
-                    <span class="user-form__label-note">（変更する場合のみ入力）</span>
-                </label>
-                <input type="password" id="password" name="password" class="user-form__input">
-            </div>
+        <div class="form-group">
+            <label for="first_name" class="form-group__label">名</label>
+            <input type="text" id="first_name" name="first_name" class="form-group__input" 
+                   value="<?= htmlspecialchars($user['first_name']) ?>" required>
+        </div>
 
-            <div class="user-form__row">
-                <div class="user-form__group">
-                    <label for="last_name" class="user-form__label">姓</label>
-                    <input type="text" id="last_name" name="last_name" class="user-form__input" 
-                           value="<?= htmlspecialchars($user['last_name']) ?>" required>
-                </div>
+        <div class="form-group">
+            <label for="last_name" class="form-group__label">姓</label>
+            <input type="text" id="last_name" name="last_name" class="form-group__input" 
+                   value="<?= htmlspecialchars($user['last_name']) ?>" required>
+        </div>
 
-                <div class="user-form__group">
-                    <label for="first_name" class="user-form__label">名</label>
-                    <input type="text" id="first_name" name="first_name" class="user-form__input" 
-                           value="<?= htmlspecialchars($user['first_name']) ?>" required>
-                </div>
-            </div>
+        <div class="form-group">
+            <label for="phone_number" class="form-group__label">電話番号（必須）</label>
+            <input type="tel" id="phone_number" name="phone_number" class="form-group__input" 
+                   value="<?= htmlspecialchars($user['phone_number'] ?? '') ?>" 
+                   pattern="[0-9-]{10,}"
+                   title="正しい電話番号の形式で入力してください"
+                   required>
+        </div>
 
-            <div class="user-form__group">
-                <label for="role" class="user-form__label">権限</label>
-                <select id="role" name="role" class="user-form__input" required 
-                        <?= $user['id'] == $_SESSION['user_id'] ? 'disabled' : '' ?>>
-                    <option value="user" <?= $user['role'] === 'user' ? 'selected' : '' ?>>
-                        一般ユーザー
-                    </option>
-                    <option value="admin" <?= $user['role'] === 'admin' ? 'selected' : '' ?>>
-                        管理者
-                    </option>
-                </select>
-                <?php if ($user['id'] == $_SESSION['user_id']): ?>
-                    <input type="hidden" name="role" value="<?= $user['role'] ?>">
-                <?php endif; ?>
-            </div>
+        <div class="form-group">
+            <label for="address" class="form-group__label">住所（任意）</label>
+            <textarea id="address" name="address" class="form-group__input"><?= htmlspecialchars($user['address'] ?? '') ?></textarea>
+        </div>
 
-            <div class="user-form__group">
-                <label for="status" class="user-form__label">ステータス</label>
-                <select id="status" name="status" class="user-form__input" required
-                        <?= $user['id'] == $_SESSION['user_id'] ? 'disabled' : '' ?>>
-                    <option value="active" <?= $user['status'] === 'active' ? 'selected' : '' ?>>
-                        有効
-                    </option>
-                    <option value="inactive" <?= $user['status'] === 'inactive' ? 'selected' : '' ?>>
-                        無効
-                    </option>
-                </select>
-                <?php if ($user['id'] == $_SESSION['user_id']): ?>
-                    <input type="hidden" name="status" value="<?= $user['status'] ?>">
-                <?php endif; ?>
-            </div>
+        <div class="form-group">
+            <label for="status" class="form-group__label">ステータス</label>
+            <select id="status" name="status" class="form-group__input">
+                <option value="active" <?= $user['status'] === 'active' ? 'selected' : '' ?>>有効</option>
+                <option value="inactive" <?= $user['status'] === 'inactive' ? 'selected' : '' ?>>無効</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="role" class="form-group__label">権限</label>
+            <select id="role" name="role" class="form-group__input">
+                <option value="user" <?= $user['role'] === 'user' ? 'selected' : '' ?>>一般ユーザー</option>
+                <option value="admin" <?= $user['role'] === 'admin' ? 'selected' : '' ?>>管理者</option>
+            </select>
+        </div>
 
             <div class="user-form__actions">
                 <button type="submit" class="button button--primary">

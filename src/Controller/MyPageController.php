@@ -37,8 +37,10 @@ class MyPageController {
             'first_name' => $_POST['first_name'] ?? '',
             'last_name' => $_POST['last_name'] ?? '',
             'email' => $_POST['email'] ?? '',
-            'role' => $currentUser['role'],  // 既存のroleを保持
-            'status' => $currentUser['status']  // 既存のstatusを保持
+            'phone_number' => $_POST['phone_number'] ?? '',
+            'address' => $_POST['address'] ?? '',
+            'role' => $currentUser['role'],  
+            'status' => $currentUser['status']
         ];
 
         // バリデーション
@@ -105,6 +107,47 @@ class MyPageController {
         } else {
             $_SESSION['error'] = 'パスワードの更新に失敗しました。';
             header('Location: /mypage/password');
+        }
+    }
+
+    public function deactivate()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /mypage');
+            exit();
+        }
+
+        $userId = $_SESSION['user_id'];
+        $currentUser = $this->userModel->findById($_SESSION['user_id']);
+
+        $data = [
+            'first_name' => $currentUser['first_name'] ?? '',
+            'last_name' => $currentUser['last_name'] ?? '',
+            'email' => $currentUser['email'] ?? '',
+            'phone_number' => $currentUser['phone_number'] ?? '',
+            'address' => $currentUser['address'] ?? '',
+            'role' => $currentUser['role'],  
+            'status' => '無効'
+        ];
+
+        if ($this->userModel->update($_SESSION['user_id'], $data)) {
+            session_destroy();
+            header('Location: /');
+            exit;
+        } else {
+            $_SESSION['error'] = '退会処理に失敗しました。';
+            header('Location: /mypage');
+            exit();
+        }
+
+        if ($result) {
+            session_destroy();
+            header('Location: /');
+            exit;
+        } else {
+            $_SESSION['error'] = '退会処理に失敗しました。';
+            header('Location: /mypage');
+            exit();
         }
     }
 } 

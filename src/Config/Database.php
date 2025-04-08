@@ -11,14 +11,27 @@ class Database {
 
     private function __construct() {
         try {
-            // JawsDB URLから接続情報を取得
-            $url = parse_url(getenv("JAWSDB_URL"));
+            // Heroku環境の場合はJawsDB URLを使用
+            if (getenv("JAWSDB_URL")) {
+                $url = parse_url(getenv("JAWSDB_URL"));
+                $host = $url["host"];
+                $dbname = ltrim($url["path"], '/');
+                $username = $url["user"];
+                $password = $url["pass"];
+            } 
+            // ローカル環境の場合は.envの設定を使用
+            else {
+                $host = getenv("DB_HOST") ?: "127.0.0.1";
+                $dbname = getenv("DB_DATABASE") ?: "ec_demo";
+                $username = getenv("DB_USERNAME") ?: "root";
+                $password = getenv("DB_PASSWORD") ?: "";
+            }
             
             $this->connection = new PDO(
-                "mysql:host=" . $url["host"] . 
-                ";dbname=" . ltrim($url["path"], '/'),
-                $url["user"],
-                $url["pass"],
+                "mysql:host=" . $host . 
+                ";dbname=" . $dbname,
+                $username,
+                $password,
                 [
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -46,11 +59,21 @@ class Database {
     public function __wakeup() {}
 
     public function getDatabaseConfig() {
+        if (getenv("JAWSDB_URL")) {
+            $url = parse_url(getenv("JAWSDB_URL"));
+            return [
+                'host' => $url["host"],
+                'database' => ltrim($url["path"], '/'),
+                'username' => $url["user"],
+                'password' => $url["pass"],
+            ];
+        }
+        
         return [
-            'host' => $url["host"],
-            'database' => ltrim($url["path"], '/'),
-            'username' => $url["user"],
-            'password' => $url["pass"],
+            'host' => getenv("DB_HOST") ?: "127.0.0.1",
+            'database' => getenv("DB_DATABASE") ?: "ec_demo",
+            'username' => getenv("DB_USERNAME") ?: "root",
+            'password' => getenv("DB_PASSWORD") ?: "",
         ];
     }
 } 
