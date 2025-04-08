@@ -17,11 +17,28 @@ class ProductController {
     }
 
     public function index() {
+        $currentPage = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $perPage = 10;
+        $totalProducts = $this->productModel->getTotalProducts();
+        $totalPages = ceil($totalProducts / $perPage);
+        $offset = ($currentPage - 1) * $perPage;
+
         $keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : null;
         $category = isset($_GET['category']) ? $_GET['category'] : null;
         
-        $products = $this->productModel->searchProducts($keyword, $category);
+        $products = $this->productModel->searchProducts($currentPage, $keyword, $category);
         $categories = $this->productModel->getCategories();
+
+        $data = [
+            'products' => $products,
+            'categories' => $categories,
+            'currentPage' => $currentPage,
+            'totalPages' => $totalPages,
+            'perPage' => $perPage,
+            'totalProducts' => $totalProducts
+        ];
+
+        extract($data);
 
         require __DIR__ . '/../View/products/index.php';
     }

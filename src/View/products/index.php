@@ -61,6 +61,59 @@
                     </div>
                 <?php endforeach; ?>
             </div>
+
+            <?php if ($totalPages > 1): ?>
+                    <div class="pagination">
+                        <span class="table__count">
+                            全<?php echo number_format($totalProducts); ?>件中
+                            <?php
+                            $start = ($currentPage - 1) * $perPage + 1;
+                            $end = min($currentPage * $perPage, $totalProducts);
+                            echo number_format($start) . '～' . number_format($end);
+                            ?>件を表示
+                        </span>
+                        <div class="pagination__inner">
+                            <?php if ($currentPage > 1): ?>
+                                <a href="?page=1" class="pagination__item">
+                                    <i class="fas fa-angle-double-left"></i>
+                                </a>
+                                <a href="?page=<?php echo $currentPage - 1; ?>" class="pagination__item">
+                                    <i class="fas fa-angle-left"></i>
+                                </a>
+                            <?php endif; ?>
+
+                            <?php
+                            $start = max(1, $currentPage - 2);
+                            $end = min($totalPages, $currentPage + 2);
+                            
+                            if ($start > 1) {
+                                echo '<span class="pagination__item pagination__item--dots">...</span>';
+                            }
+                            
+                            for ($i = $start; $i <= $end; $i++) {
+                                if ($i == $currentPage) {
+                                    echo '<span class="pagination__item pagination__item--current">' . $i . '</span>';
+                                } else {
+                                    echo '<a href="?page=' . $i . '" class="pagination__item">' . $i . '</a>';
+                                }
+                            }
+                            
+                            if ($end < $totalPages) {
+                                echo '<span class="pagination__item pagination__item--dots">...</span>';
+                            }
+                            ?>
+
+                            <?php if ($currentPage < $totalPages): ?>
+                                <a href="?page=<?php echo $currentPage + 1; ?>" class="pagination__item">
+                                    <i class="fas fa-angle-right"></i>
+                                </a>
+                                <a href="?page=<?php echo $totalPages; ?>" class="pagination__item">
+                                    <i class="fas fa-angle-double-right"></i>
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
         <?php endif; ?>
     </div>
 </main>

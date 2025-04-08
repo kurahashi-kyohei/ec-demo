@@ -82,13 +82,11 @@ class Product {
         $sql .= " ORDER BY id LIMIT :limit OFFSET :offset";
     
         $stmt = $this->db->prepare($sql);
-        
-        // 検索条件のパラメータをバインド
+
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value);
         }
         
-        // LIMIT と OFFSET を別途バインド
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         

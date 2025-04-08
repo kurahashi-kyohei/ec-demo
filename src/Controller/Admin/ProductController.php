@@ -36,7 +36,6 @@ class ProductController
 
         $totalProducts = $this->productModel->getTotalProducts();
         $totalPages = ceil($totalProducts / $perPage);
-        // $currentPage = min($currentPage, $totalPages);
         $offset = ($currentPage - 1) * $perPage;
 
         $keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : null;
