@@ -71,6 +71,12 @@ $router->post('/mypage/update', function() {
     $controller->update();
 });
 
+$router->post('/mypage/deactivate', function() {
+    $controller = new MyPageController;
+    $controller->deactivate();
+});
+
+
 $router->get('/mypage/password', function() {
     $controller = new MyPageController;
     $controller->editPassword();
@@ -177,6 +183,21 @@ $router->post('/admin/products/update/(\d+)', function($id) {
 $router->post('/admin/products/delete/(\d+)', function($id) {
     $controller = new AdminProductController();
     $controller->delete($id);
+});
+
+$router->post('/admin/products/bulk-delete', function() {
+    $controller = new AdminProductController();
+    $controller->bulkDelete();
+});
+
+$router->post('/admin/products/import-csv', function() {
+    $controller = new AdminProductController();
+    $controller->importCsv();
+});
+
+$router->get('/admin/products/export-csv', function() {
+    $controller = new AdminProductController();
+    $controller->exportCsv();
 });
 
 // 管理画面注文管理

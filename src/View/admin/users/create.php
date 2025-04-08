@@ -29,6 +29,16 @@
             </div>
 
             <div class="user-form__group">
+                <label for="phone_number" class="user-form__label">電話番号</label>
+                <input type="phone_number" id="phone_number" name="phone_number" class="user-form__input" required>
+            </div>
+
+            <div class="user-form__group">
+                <label for="phone_number" class="user-form__label">住所（任意）</label>
+                <input type="phone_number" id="phone_number" name="phone_number" class="user-form__input">
+            </div>
+
+            <div class="user-form__group">
                 <label for="password" class="user-form__label">パスワード</label>
                 <input type="password" id="password" name="password" class="user-form__input" required>
             </div>

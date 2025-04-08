@@ -7,7 +7,7 @@
     &__container {
         max-width: var(--container-width);
         margin: 0 auto;
-        padding: 0 var(--container-padding);
+        
     }
 
     &__header {
@@ -52,6 +52,8 @@
         background-color: #fff;
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-collapse: collapse;
+        position: relative;
 
         th {
             background-color: #f7fafc;
@@ -65,12 +67,33 @@
             padding: 1rem;
             vertical-align: middle;
             border-bottom: 1px solid #e2e8f0;
+            height: 100%;
+        }
+
+        &__actions {
+            display: table-cell;
+            white-space: nowrap;
+        }
+
+        .btn-bulk-delete {
+            padding: 0.5rem 1rem;
+            // margin: 1rem;
+            background-color: #c53030;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            align-self: flex-end;
+            position: absolute;
+            left: 1rem;
+            top: 1.2rem;
         }
     }
 
     .product-thumbnail {
-        width: 60px;
-        height: 60px;
+        // width: 60px;
+        // height: 60px;
+        height: 120px;
         object-fit: cover;
         border-radius: 4px;
         border: 1px solid #e2e8f0;
@@ -115,18 +138,12 @@
     }
 }
 
-.admin-table {
-    &__actions {
-        display: flex;
-        gap: 0.5rem;
-    }
-}
-
 .product-form {
     background-color: #fff;
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
 
     &__group {
         margin-bottom: 1.5rem;
@@ -169,14 +186,6 @@
             border: 1px solid #e2e8f0;
         }
     }
-
-    &__actions {
-        display: flex;
-        gap: 1rem;
-        margin-top: 2rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid #e2e8f0;
-    }
 }
 
 @media (max-width: 768px) {
@@ -207,4 +216,79 @@
             gap: 0.5rem;
         }
     }
-} 
+
+}
+
+.table__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.table__header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.table__count {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.pagination {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    justify-content: space-between;
+    padding: 1rem 0;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination__inner {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.pagination__item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.pagination__item:hover {
+    background-color: #f5f5f5;
+    border-color: #999;
+}
+
+.pagination__item--current {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.pagination__item--dots {
+    border: none;
+    width: auto;
+    padding: 0 0.5rem;
+}
+
+.pagination__item--dots:hover {
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.admin-search {
+    padding: 1rem 0;
+}

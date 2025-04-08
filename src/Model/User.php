@@ -4,6 +4,7 @@ namespace App\Model;
 
 use App\Config\Database;
 use PDO;
+use PDOException;
 
 class User {
     private $db;
@@ -27,19 +28,25 @@ class User {
     }
 
     public function create($data) {
-        $sql = "INSERT INTO users (email, password, first_name, last_name, role, status, created_at, updated_at) 
-                VALUES (:email, :password, :first_name, :last_name, :role, :status, NOW(), NOW())";
+        $sql = "INSERT INTO users (email, password, first_name, last_name, phone_number, address, role, status, created_at, updated_at) 
+                VALUES (:email, :password, :first_name, :last_name, :phone_number, :address, :role, :status, NOW(), NOW())";
         
-        $stmt = $this->db->prepare($sql);
-        
-        return $stmt->execute([
-            ':email' => $data['email'],
-            ':password' => password_hash($data['password'], PASSWORD_DEFAULT),
-            ':first_name' => $data['first_name'],
-            ':last_name' => $data['last_name'],
-            ':role' => $data['role'] ?? 'user',
-            ':status' => $data['status'] ?? 'active'
-        ]);
+        try {
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute([
+                ':email' => $data['email'],
+                ':password' => $data['password'],
+                ':first_name' => $data['first_name'],
+                ':last_name' => $data['last_name'],
+                ':phone_number' => $data['phone_number'],
+                ':address' => $data['address'],
+                ':role' => $data['role'] ?? 'user',
+                ':status' => $data['status'] ?? 'active'
+            ]);
+        } catch (PDOException $e) {
+            error_log("Failed to create user: " . $e->getMessage());
+            return false;
+        }
     }
 
     public function update($id, $data) {
@@ -47,14 +54,12 @@ class User {
                 SET email = :email, 
                     first_name = :first_name, 
                     last_name = :last_name, 
+                    phone_number = :phone_number,
+                    address = :address,
                     role = :role,
                     status = :status,
                     updated_at = NOW()";
 
-        // パスワードが提供された場合のみ更新
-        if (!empty($data['password'])) {
-            $sql .= ", password = :password";
-        }
 
         $sql .= " WHERE id = :id";
         
@@ -65,14 +70,13 @@ class User {
             ':email' => $data['email'],
             ':first_name' => $data['first_name'],
             ':last_name' => $data['last_name'],
+            ':phone_number' => $data['phone_number'],
+            ':address' => $data['address'],
             ':role' => $data['role'],
             ':status' => $data['status']
         ];
 
-        // パスワードが提供された場合のみパラメータに追加
-        if (!empty($data['password'])) {
-            $params[':password'] = password_hash($data['password'], PASSWORD_DEFAULT);
-        }
+
 
         return $stmt->execute($params);
     }

@@ -33,6 +33,9 @@
                 <i class="fas fa-heart"></i>
                 お気に入り商品
             </a>
+            <form action="/logout" method="POST" class="mypage__logout">
+                <button type="submit" class="logout-btn">ログアウト</button>
+            </form>
         </div>
     </div>
 
@@ -45,11 +48,13 @@
         <?php endif; ?>
     </div>
 
-    <div class="mypage__logout">
-        <form action="/logout" method="POST" class="logout-form">
-            <button type="submit" class="button button--danger">ログアウト</button>
-        </form>
-    </div>
+    <form action="/mypage/deactivate" method="POST" class="mypage__danger-zone" 
+            onsubmit="return confirm('本当に退会してもよろしいですか？\nこの操作は取り消すことができません。');">
+        <button type="submit" class="button button--danger">
+            <i class="fas fa-user-times"></i>
+            退会する
+        </button>
+    </form>
 </div>
 
 <?php require_once __DIR__ . '/../layout/footer.php'; ?> 

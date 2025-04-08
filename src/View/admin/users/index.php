@@ -44,11 +44,13 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>名前</th>
                             <th>メールアドレス</th>
-                            <th>権限</th>
+                            <th>名</th>
+                            <th>姓</th>
+                            <th>電話番号</th>
+                            <th>住所</th>
                             <th>ステータス</th>
-                            <th>登録日</th>
+                            <th>作成日</th>
                             <th>操作</th>
                         </tr>
                     </thead>
@@ -56,15 +58,11 @@
                         <?php foreach ($users as $user): ?>
                             <tr>
                                 <td><?php echo htmlspecialchars($user['id']); ?></td>
-                                <td>
-                                    <?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?>
-                                </td>
                                 <td><?php echo htmlspecialchars($user['email']); ?></td>
-                                <td>
-                                    <span class="role-badge role-badge--<?php echo $user['role']; ?>">
-                                        <?php echo $user['role'] === 'admin' ? '管理者' : '一般ユーザー'; ?>
-                                    </span>
-                                </td>
+                                <td><?php echo htmlspecialchars($user['first_name']); ?></td>
+                                <td><?php echo htmlspecialchars($user['last_name']); ?></td>
+                                <td><?php echo htmlspecialchars($user['phone_number'] ?? '未設定'); ?></td>
+                                <td><?php echo htmlspecialchars($user['address'] ?? '未設定'); ?></td>
                                 <td>
                                     <span class="status-badge status-badge--<?php echo $user['status']; ?>">
                                         <?php echo $user['status'] === 'active' ? '有効' : '無効'; ?>
@@ -99,3 +97,5 @@
         <?php endif; ?>
     </div>
 </div>
+
+<?php require __DIR__ . '/../../layout/admin/footer.php'; ?>

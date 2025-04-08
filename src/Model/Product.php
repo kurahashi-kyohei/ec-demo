@@ -62,46 +62,102 @@ class Product {
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
-    public function searchProducts($keyword = null, $category = null) {
+    public function searchProducts($currentPage =1, $keyword = null, $category = null) {
+        $limit = 10;
+        $offset = ($currentPage - 1) * $limit;
+    
+        $sql = "SELECT * FROM products WHERE 1=1";
         $params = [];
-        $conditions = [];
-
-        if ($keyword) {
-            $conditions[] = "(name LIKE ? OR description LIKE ?)";
-            $params[] = "%{$keyword}%";
-            $params[] = "%{$keyword}%";
+        
+        if (!empty($keyword)) {
+            $sql .= " AND name LIKE :keyword";
+            $params[':keyword'] = "%{$keyword}%";
+        }
+        
+        if (!empty($category)) {
+            $sql .= " AND category = :category";
+            $params[':category'] = $category;
         }
 
-        if ($category) {
-            $conditions[] = "category = ?";
-            $params[] = $category;
-        }
-
-        $sql = "SELECT * FROM products";
-        if (!empty($conditions)) {
-            $sql .= " WHERE " . implode(" AND ", $conditions);
-        }
-        $sql .= " ORDER BY created_at DESC";
-
+        $sql .= " ORDER BY id LIMIT :limit OFFSET :offset";
+    
         $stmt = $this->db->prepare($sql);
-        $stmt->execute($params);
-        return $stmt->fetchAll();
+        
+        // 検索条件のパラメータをバインド
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        
+        // LIMIT と OFFSET を別途バインド
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        
+        $stmt->execute();
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $products;
     }
+    // public function searchProducts($currentPage =1, $keyword = null, $category = null) {
+
+    //     $offset = ($currentPage - 1) * 10;
+    //     $limit = 10;
+        
+    //     $sql = "SELECT * FROM products WHERE 1=1";
+    //     $stmt = $this->db->prepare($sql);
+
+    //     if (!empty($keyword)) {
+    //         $sql .= " AND name LIKE :keyword";
+    //         $stmt->bindParam('keyword', $keyword, PDO::PARAM_STR);
+    //     }
+
+    //     if (!empty($category)) {
+    //         $sql .= " AND category = :category";
+    //         $stmt->bindParam('category', $category, PDO::PARAM_STR);
+    //     }
+
+    //     // $countSql = str_replace("SELECT *", "SELECT COUNT(*) as count", $sql);
+    //     // $countStmt = $this->db->prepare($countSql);
+    //     // $countStmt->execute($params);
+    //     // $totalCount = $countStmt->fetch(PDO::FETCH_ASSOC)['count'];
+
+    //     $sql .= " ORDER BY id DESC LIMIT :limit OFFSET :offset";
+    //     $stmt->bindParam('limit', $limit, PDO::PARAM_INT);
+    //     $stmt->bindParam('offset', $offset, PDO::PARAM_INT);
+        
+    //     $stmt->execute();
+    //     return $stmt->fetchAll();
+    // }
 
     public function create($data) {
-        $sql = "INSERT INTO products (name, description, price, stock, image_path, category, created_at, updated_at) 
-                VALUES (:name, :description, :price, :stock, :image_path, :category, NOW(), NOW())";
-        
-        $stmt = $this->db->prepare($sql);
-        
-        return $stmt->execute([
-            ':name' => $data['name'],
-            ':description' => $data['description'],
-            ':price' => $data['price'],
-            ':stock' => $data['stock'],
-            ':image_path' => $data['image_path'],
-            ':category' => $data['category']
-        ]);
+        try {
+            $sql = "INSERT INTO products (name, description, price, stock, image_path, category, created_at, updated_at) 
+                    VALUES (:name, :description, :price, :stock, :image_path, :category, NOW(), NOW())";
+            
+            $stmt = $this->db->prepare($sql);
+            
+            $params = [
+                ':name' => $data['name'],
+                ':description' => $data['description'],
+                ':price' => $data['price'],
+                ':stock' => $data['stock'],
+                ':image_path' => $data['image_path'],
+                ':category' => $data['category']
+            ];
+            
+            error_log('Executing SQL: ' . $sql);
+            error_log('Parameters: ' . print_r($params, true));
+            
+            $result = $stmt->execute($params);
+            
+            if (!$result) {
+                error_log('SQL Error: ' . print_r($stmt->errorInfo(), true));
+            }
+            
+            return $result;
+        } catch (\PDOException $e) {
+            error_log('Database Error: ' . $e->getMessage());
+            return false;
+        }
     }
 
     public function update($id, $data) {
@@ -132,5 +188,30 @@ class Product {
         $sql = "DELETE FROM products WHERE id = :id";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([':id' => $id]);
+    }
+
+    /**
+     * 商品の総数を取得
+     */
+    public function getTotalProducts()
+    {
+        $sql = "SELECT COUNT(*) as total FROM products";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetch();
+        return (int)$result['total'];
+    }
+
+    /**
+     * 指定された範囲の商品を取得
+     */
+    public function getProducts($limit, $offset)
+    {
+        $sql = "SELECT * FROM products ORDER BY id DESC LIMIT :limit OFFSET :offset";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 } 
