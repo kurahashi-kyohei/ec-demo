@@ -14,18 +14,46 @@ class AddTotalAmountAndStatusToOrders
         $this->db = Database::getInstance()->getConnection();
     }
 
+    private function columnExists($tableName, $columnName)
+    {
+        $sql = "SHOW COLUMNS FROM {$tableName} LIKE :column";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':column' => $columnName]);
+        return $stmt->rowCount() > 0;
+    }
+
     public function up()
     {
         try {
-            // テーブル構造を変更
+            // total_amountカラムの追加
+            if (!$this->columnExists('orders', 'total_amount')) {
+                $sql = "ALTER TABLE orders 
+                        ADD COLUMN total_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00";
+                $this->db->exec($sql);
+                echo "Added total_amount column successfully\n";
+            }
+
+            // statusカラムの追加
+            if (!$this->columnExists('orders', 'status')) {
+                $sql = "ALTER TABLE orders 
+                        ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'pending'";
+                $this->db->exec($sql);
+                echo "Added status column successfully\n";
+            }
+
+            // updated_atカラムの追加
+            if (!$this->columnExists('orders', 'updated_at')) {
+                $sql = "ALTER TABLE orders 
+                        ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
+                $this->db->exec($sql);
+                echo "Added updated_at column successfully\n";
+            }
+
+            // created_atカラムの修正
             $sql = "ALTER TABLE orders 
-                    ADD COLUMN IF NOT EXISTS total_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-                    ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'pending',
-                    ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                     MODIFY COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP";
-            
             $this->db->exec($sql);
-            echo "Added total_amount, status, and updated_at columns to orders table successfully\n";
+            echo "Modified created_at column successfully\n";
 
             // 既存の注文の合計金額を更新
             $sql = "UPDATE orders o 
@@ -48,14 +76,21 @@ class AddTotalAmountAndStatusToOrders
     public function down()
     {
         try {
-            // カラムを削除
-            $sql = "ALTER TABLE orders 
-                    DROP COLUMN IF EXISTS total_amount,
-                    DROP COLUMN IF EXISTS status,
-                    DROP COLUMN IF EXISTS updated_at";
-            
-            $this->db->exec($sql);
-            echo "Dropped columns successfully\n";
+            // カラムの存在確認と削除
+            if ($this->columnExists('orders', 'total_amount')) {
+                $this->db->exec("ALTER TABLE orders DROP COLUMN total_amount");
+                echo "Dropped total_amount column successfully\n";
+            }
+
+            if ($this->columnExists('orders', 'status')) {
+                $this->db->exec("ALTER TABLE orders DROP COLUMN status");
+                echo "Dropped status column successfully\n";
+            }
+
+            if ($this->columnExists('orders', 'updated_at')) {
+                $this->db->exec("ALTER TABLE orders DROP COLUMN updated_at");
+                echo "Dropped updated_at column successfully\n";
+            }
 
             echo "Rollback completed successfully\n";
 
