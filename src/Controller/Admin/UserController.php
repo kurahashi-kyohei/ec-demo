@@ -235,4 +235,17 @@ class UserController
         header('Location: /admin/users');
         exit();
     }
+
+    public function showOrders($id)
+    {
+        $orders = $this->userModel->getOrdersByUserId($id);
+        $data = [
+            'title' => '注文履歴',
+            'orders' => $orders 
+        ];
+        
+        extract($data);
+        require __DIR__ . '/../../View/admin/users/orders.php';
+    }
+    
 } 

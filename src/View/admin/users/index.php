@@ -45,8 +45,8 @@
                         <tr>
                             <th>ID</th>
                             <th>メールアドレス</th>
-                            <th>名</th>
                             <th>姓</th>
+                            <th>名</th>
                             <th>電話番号</th>
                             <th>住所</th>
                             <th>ステータス</th>
@@ -59,8 +59,8 @@
                             <tr>
                                 <td><?php echo htmlspecialchars($user['id']); ?></td>
                                 <td><?php echo htmlspecialchars($user['email']); ?></td>
-                                <td><?php echo htmlspecialchars($user['first_name']); ?></td>
                                 <td><?php echo htmlspecialchars($user['last_name']); ?></td>
+                                <td><?php echo htmlspecialchars($user['first_name']); ?></td>
                                 <td><?php echo htmlspecialchars($user['phone_number'] ?? '未設定'); ?></td>
                                 <td><?php echo htmlspecialchars($user['address'] ?? '未設定'); ?></td>
                                 <td>
@@ -87,6 +87,10 @@
                                                 </button>
                                             </form>
                                         <?php endif; ?>
+                                        <a href="/admin/users/orders/<?php echo $user['id']; ?>" 
+                                           class="btn btn-sm btn-primary">
+                                            注文履歴
+                                        </a>
                                     </div>
                                 </td>
                             </tr>

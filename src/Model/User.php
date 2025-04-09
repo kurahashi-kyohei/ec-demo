@@ -171,7 +171,6 @@ class User {
     }
 
     public function getUserWithOrders($id) {
-        // ユーザー基本情報を取得
         $sql = "
             SELECT 
                 u.*,
@@ -187,7 +186,6 @@ class User {
             return null;
         }
 
-        // ユーザーの注文履歴を取得
         $sql = "
             SELECT 
                 o.*,
@@ -202,5 +200,12 @@ class User {
         $user['orders'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return $user;
+    }
+
+    public function getOrdersByUserId($id) {
+        $sql = "SELECT * FROM orders WHERE user_id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 } 

@@ -13,13 +13,13 @@
 
         <form action="/register" method="POST" class="auth__form">
             <div class="form-group">
-                <label for="first_name" class="form-group__label">名</label>
-                <input type="text" id="first_name" name="first_name" class="form-group__input" required>
+                <label for="last_name" class="form-group__label">姓</label>
+                <input type="text" id="last_name" name="last_name" class="form-group__input" required>
             </div>
 
             <div class="form-group">
-                <label for="last_name" class="form-group__label">姓</label>
-                <input type="text" id="last_name" name="last_name" class="form-group__input" required>
+                <label for="first_name" class="form-group__label">名</label>
+                <input type="text" id="first_name" name="first_name" class="form-group__input" required>
             </div>
 
             <div class="form-group">
