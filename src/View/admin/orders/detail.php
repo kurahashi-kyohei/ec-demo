@@ -11,6 +11,7 @@
         </div>
 
         <div class="admin-order-detail__content">
+            
             <div class="order-info">
                 <h2 class="order-info__title">注文情報</h2>
                 <div class="order-info__grid">
@@ -25,47 +26,6 @@
                     <div class="order-info__item">
                         <span class="order-info__label">注文日時</span>
                         <span class="order-info__value"><?= date('Y/m/d H:i', strtotime($order['created_at'])) ?></span>
-                    </div>
-                    <div class="order-info__item">
-                        <span class="order-info__label">ステータス</span>
-                        <span class="order-info__value">
-                            <form action="/admin/orders/<?= $order['id'] ?>/status" method="post" class="status-form">
-                                <select name="status" class="status-form__select" onchange="this.form.submit()">
-                                    <option value="pending" <?= $order['status'] === 'pending' ? 'selected' : '' ?>>
-                                        未処理
-                                    </option>
-                                    <option value="processing" <?= $order['status'] === 'processing' ? 'selected' : '' ?>>
-                                        処理中
-                                    </option>
-                                    <option value="completed" <?= $order['status'] === 'completed' ? 'selected' : '' ?>>
-                                        完了
-                                    </option>
-                                    <option value="cancelled" <?= $order['status'] === 'cancelled' ? 'selected' : '' ?>>
-                                        キャンセル
-                                    </option>
-                                </select>
-                            </form>
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="shipping-info">
-                <h2 class="shipping-info__title">配送情報</h2>
-                <div class="shipping-info__content">
-                    <div class="shipping-info__item">
-                        <span class="shipping-info__label">郵便番号</span>
-                        <span class="shipping-info__value"><?= htmlspecialchars($order['postal_code']) ?></span>
-                    </div>
-                    <div class="shipping-info__item">
-                        <span class="shipping-info__label">住所</span>
-                        <span class="shipping-info__value">
-                            <?= htmlspecialchars($order['address']) ?>
-                        </span>
-                    </div>
-                    <div class="shipping-info__item">
-                        <span class="shipping-info__label">電話番号</span>
-                        <span class="shipping-info__value"><?= htmlspecialchars($order['phone']) ?></span>
                     </div>
                 </div>
             </div>
@@ -100,14 +60,6 @@
                             <?php endforeach; ?>
                         </tbody>
                         <tfoot>
-                            <tr>
-                                <td colspan="3" class="text-right">小計</td>
-                                <td>¥<?= number_format($order['subtotal']) ?></td>
-                            </tr>
-                            <tr>
-                                <td colspan="3" class="text-right">送料</td>
-                                <td>¥<?= number_format($order['shipping_fee']) ?></td>
-                            </tr>
                             <tr>
                                 <td colspan="3" class="text-right">合計</td>
                                 <td class="total-amount">¥<?= number_format($order['total_amount']) ?></td>

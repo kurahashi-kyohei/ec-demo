@@ -2,6 +2,7 @@
 
 namespace App\Model;
 
+use App\Model\Order;
 class Cart {
     public function __construct() {
         if (!isset($_SESSION['cart'])) {
@@ -53,5 +54,11 @@ class Cart {
         }
 
         return $total;
+    }
+
+    public function order() {
+        $orderModel = new Order();
+        $orderModel->createOrder($_SESSION['cart']);
+        $this->clear();
     }
 } 

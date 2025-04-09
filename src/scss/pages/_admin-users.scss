@@ -195,6 +195,43 @@
     }
 }
 
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-badge--pending {
+    background-color: var(--color-warning-light);
+    color: var(--color-warning-dark);
+}
+
+.status-badge--processing {
+    background-color: var(--color-info-light);
+    color: var(--color-info-dark);
+}
+
+.status-badge--completed {
+    background-color: var(--color-success-light);
+    color: var(--color-success-dark);
+}
+
+.status-badge--cancelled {
+    background-color: var(--color-danger-light);
+    color: var(--color-danger-dark);
+}
+
+.button-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.delete-form {
+    margin: 0;
+}
+
 @media (max-width: 768px) {
     .admin-users {
         &__header {

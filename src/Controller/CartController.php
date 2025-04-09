@@ -129,4 +129,15 @@ class CartController {
         $_SESSION['success'] = 'カートを空にしました。';
         header('Location: /cart');
     }
+
+    public function order() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /cart');
+            return;
+        }
+
+        $this->cartModel->order();
+        $_SESSION['success'] = '注文が確定されました。';
+        header('Location: /cart');
+    }
 } 

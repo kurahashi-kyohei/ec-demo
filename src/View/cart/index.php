@@ -73,7 +73,9 @@
                     <form action="/cart/clear" method="POST" class="cart__clear-form">
                         <button type="submit" class="button button--secondary">カートを空にする</button>
                     </form>
-                    <a href="/checkout" class="button">レジに進む</a>
+                    <form action="/cart/order" method="POST">
+                        <button type="submit" class="button">注文を確定する</button>
+                    </form>
                 </div>
             </div>
         <?php endif; ?>

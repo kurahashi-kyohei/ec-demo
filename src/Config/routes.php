@@ -124,6 +124,11 @@ $router->post('/cart/clear', function() {
     $controller->clear();
 });
 
+$router->post('/cart/order', function() {
+    $controller = new CartController();
+    $controller->order();
+});
+
 // お気に入り関連
 $router->get('/favorites', function() {
     $controller = new FavoriteController();
@@ -206,14 +211,19 @@ $router->get('/admin/orders', function() {
     $controller->index();
 });
 
+$router->get('/admin/orders/search', function() {
+    $controller = new AdminOrderController();
+    $controller->search();
+});
+
 $router->get('/admin/orders/(\d+)', function($id) {
     $controller = new AdminOrderController();
     $controller->show($id);
 });
 
-$router->post('/admin/orders/(\d+)/status', function($id) {
+$router->post('/admin/orders/delete', function() {
     $controller = new AdminOrderController();
-    $controller->updateStatus($id);
+    $controller->delete();
 });
 
 // 管理画面ユーザー管理
@@ -247,14 +257,9 @@ $router->post('/admin/users/delete/(\d+)', function($id) {
     $controller->delete($id);
 });
 
-$router->get('/admin/users/(\d+)', function($id) {
+$router->get('/admin/users/orders/(\d+)', function($id) {
     $controller = new AdminUserController();
-    $controller->show($id);
-});
-
-$router->post('/admin/users/(\d+)/toggle-status', function($id) {
-    $controller = new AdminUserController();
-    $controller->toggleStatus($id);
+    $controller->showOrders($id);
 });
 
 // 404エラーハンドラー

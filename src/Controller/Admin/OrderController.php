@@ -39,7 +39,7 @@ class OrderController
 
     public function show($id)
     {
-        $order = $this->orderModel->getOrderWithDetails($id);
+        $order = $this->orderModel->getOrder($id);
         
         if (!$order) {
             $_SESSION['error'] = '注文が見つかりませんでした。';
@@ -56,23 +56,36 @@ class OrderController
         require __DIR__ . '/../../View/admin/orders/detail.php';
     }
 
-    public function updateStatus($id)
-    {
-        if (!isset($_POST['status']) || !in_array($_POST['status'], ['pending', 'processing', 'completed', 'cancelled'])) {
-            $_SESSION['error'] = '無効なステータスです。';
-            header('Location: /admin/orders/' . $id);
+    public function delete() {
+        if (!isset($_POST['id'])) {
+            $_SESSION['error'] = '注文IDが指定されていません。';
+            header('Location: /admin/orders');
             exit();
         }
 
-        $result = $this->orderModel->updateStatus($id, $_POST['status']);
+        $result = $this->orderModel->delete($_POST['id']);
 
         if ($result) {
-            $_SESSION['success'] = '注文ステータスを更新しました。';
+            $_SESSION['success'] = '注文を削除しました。';
         } else {
-            $_SESSION['error'] = '注文ステータスの更新に失敗しました。';
+            $_SESSION['error'] = '注文の削除に失敗しました。';
         }
 
-        header('Location: /admin/orders/' . $id);
+        header('Location: /admin/orders');
         exit();
+    }
+
+    public function search() {
+        $keyword = isset($_GET['keyword']) ? $_GET['keyword'] : '';
+        $orders = $this->orderModel->searchOrders($keyword);
+
+        $data = [
+            'title' => '注文検索',
+            'orders' => $orders,
+            'keyword' => $keyword
+        ];
+
+        extract($data);
+        require __DIR__ . '/../../View/admin/orders/index.php';
     }
 } 
