@@ -112,36 +112,53 @@ class Order {
     }
 
     public function createOrder($cart) {
-        $userId = $_SESSION['user_id'] ?? null;
-        $totalAmount = $this->getTotalAmount($cart);
+        try {
+            $this->db->beginTransaction();
 
-        $stmt = $this->db->prepare("
-            INSERT INTO orders (user_id, total_amount, order_date, created_at)
-            VALUES (:user_id, :total_amount, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-        ");
+            $userId = $_SESSION['user_id'] ?? null;
+            $totalAmount = $this->getTotalAmount($cart);
+            $productModel = new Product();
 
-        $stmt->execute([
-            ':user_id' => $userId,
-            ':total_amount' => $totalAmount,
-        ]);
-
-        $orderId = $this->db->lastInsertId();
-
-        foreach ($cart as $productId => $quantity) {
+            // 注文を作成
             $stmt = $this->db->prepare("
-                INSERT INTO order_details (order_id, product_id, quantity, price)
-                VALUES (:order_id, :product_id, :quantity, :price)
+                INSERT INTO orders (user_id, total_amount, order_date, created_at)
+                VALUES (:user_id, :total_amount, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
             ");
 
             $stmt->execute([
-                ':order_id' => $orderId,
-                ':product_id' => $productId,
-                ':quantity' => $quantity,
-                ':price' => $totalAmount
+                ':user_id' => $userId,
+                ':total_amount' => $totalAmount
             ]);
-        }
 
-        return $orderId;
+            $orderId = $this->db->lastInsertId();
+
+            // 注文詳細を作成
+            foreach ($cart as $productId => $quantity) {
+                $product = $productModel->getProductById($productId);
+                if (!$product) {
+                    throw new \Exception("Product not found: " . $productId);
+                }
+
+                $stmt = $this->db->prepare("
+                    INSERT INTO order_details (order_id, product_id, quantity, price)
+                    VALUES (:order_id, :product_id, :quantity, :price)
+                ");
+
+                $stmt->execute([
+                    ':order_id' => $orderId,
+                    ':product_id' => $productId,
+                    ':quantity' => $quantity,
+                    ':price' => $product['price']
+                ]);
+            }
+
+            $this->db->commit();
+            return $orderId;
+
+        } catch (\Exception $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
     }
 
     public function delete($id) {
