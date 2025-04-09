@@ -17,7 +17,8 @@ class CreateOrdersTable
     public function up()
     {
         try {
-            $this->db->beginTransaction();
+            // 外部キー制約のチェックを無効化
+            $this->db->exec('SET FOREIGN_KEY_CHECKS = 0');
 
             // ordersテーブルの作成
             $sql = "CREATE TABLE IF NOT EXISTS orders (
@@ -48,11 +49,14 @@ class CreateOrdersTable
             $this->db->exec($sql);
             echo "Created order_details table successfully\n";
 
-            $this->db->commit();
+            // 外部キー制約のチェックを有効化
+            $this->db->exec('SET FOREIGN_KEY_CHECKS = 1');
+
             echo "Migration completed successfully\n";
 
         } catch (PDOException $e) {
-            $this->db->rollBack();
+            // エラーが発生した場合は外部キー制約を元に戻す
+            $this->db->exec('SET FOREIGN_KEY_CHECKS = 1');
             echo "Migration failed: " . $e->getMessage() . "\n";
             throw $e;
         }
@@ -61,8 +65,6 @@ class CreateOrdersTable
     public function down()
     {
         try {
-            $this->db->beginTransaction();
-
             // 外部キー制約のチェックを無効化
             $this->db->exec('SET FOREIGN_KEY_CHECKS = 0');
 
@@ -76,11 +78,11 @@ class CreateOrdersTable
             // 外部キー制約のチェックを有効化
             $this->db->exec('SET FOREIGN_KEY_CHECKS = 1');
 
-            $this->db->commit();
             echo "Rollback completed successfully\n";
 
         } catch (PDOException $e) {
-            $this->db->rollBack();
+            // エラーが発生した場合は外部キー制約を元に戻す
+            $this->db->exec('SET FOREIGN_KEY_CHECKS = 1');
             echo "Rollback failed: " . $e->getMessage() . "\n";
             throw $e;
         }

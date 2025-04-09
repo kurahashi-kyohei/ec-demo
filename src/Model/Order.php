@@ -119,11 +119,10 @@ class Order {
             $totalAmount = $this->getTotalAmount($cart);
             $productModel = new Product();
 
-            // 注文を作成
-            $stmt = $this->db->prepare("
-                INSERT INTO orders (user_id, total_amount, order_date, created_at)
-                VALUES (:user_id, :total_amount, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-            ");
+        $stmt = $this->db->prepare("
+            INSERT INTO orders (user_id, total_amount, order_date, created_at)
+            VALUES (:user_id, :total_amount, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        ");
 
             $stmt->execute([
                 ':user_id' => $userId,
