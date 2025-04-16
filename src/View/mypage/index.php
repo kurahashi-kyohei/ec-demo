@@ -25,6 +25,10 @@
                 <i class="fas fa-user-edit"></i>
                 プロフィール編集
             </a>
+            <a href="/mypage/card/register" class="mypage__menu-item">
+                <i class="fas fa-credit-card"></i>
+                クレジットカード登録/編集
+            </a>
             <a href="/mypage/password" class="mypage__menu-item">
                 <i class="fas fa-key"></i>
                 パスワード変更

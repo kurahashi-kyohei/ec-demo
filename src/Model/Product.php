@@ -4,6 +4,8 @@ namespace App\Model;
 
 use App\Config\Database;
 use PDO;
+use PDOException;
+use Exception;
 
 class Product {
     private $db;
@@ -40,10 +42,56 @@ class Product {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getAllProducts() {
-        $stmt = $this->db->query("SELECT * FROM products ORDER BY created_at DESC");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function findByName($name) {
+        $stmt = $this->db->prepare('
+            SELECT *
+            FROM products
+            WHERE name = :name
+        ');
+        $stmt->execute([':name' => $name]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+    
+
+    // public function getAllProducts($sort = 'id', $order = 'asc')
+    // {
+    //     try {
+    //         // 許可されたソートカラムのリスト
+    //         $allowedColumns = ['id', 'name', 'price', 'stock', 'created_at'];
+            
+    //         // ソートカラムのバリデーション
+    //         if (!in_array($sort, $allowedColumns)) {
+    //             $sort = 'id';
+    //         }
+            
+    //         // ソート順のバリデーション
+    //         $order = strtolower($order);
+    //         if (!in_array($order, ['asc', 'desc'])) {
+    //             $order = 'asc';
+    //         }
+
+    //         // SQLクエリの構築
+    //         $sql = "SELECT * FROM products ORDER BY {$sort} {$order}";
+            
+    //         $stmt = $this->db->prepare($sql);
+    //         $stmt->execute();
+            
+    //         $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+    //         // 日付のフォーマットのみ行う
+    //         foreach ($products as &$product) {
+    //             if (isset($product['created_at'])) {
+    //                 $product['created_at'] = date('Y/m/d H:i', strtotime($product['created_at']));
+    //             }
+    //         }
+            
+    //         return $products;
+            
+    //     } catch (PDOException $e) {
+    //         error_log('Database error in getAllProducts: ' . $e->getMessage());
+    //         throw new Exception('商品の取得に失敗しました。');
+    //     }
+    // }
 
     public function getProductsByCategory($category) {
         $stmt = $this->db->prepare("SELECT * FROM products WHERE category = ? ORDER BY created_at DESC");
@@ -62,8 +110,8 @@ class Product {
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
-    public function searchProducts($currentPage =1, $keyword = null, $category = null) {
-        $limit = 10;
+    public function searchProducts($currentPage =1, $keyword = null, $category = null, $sort = 'id', $order = 'asc') {
+        $limit = 30;
         $offset = ($currentPage - 1) * $limit;
     
         $sql = "SELECT * FROM products WHERE 1=1";
@@ -79,7 +127,7 @@ class Product {
             $params[':category'] = $category;
         }
 
-        $sql .= " ORDER BY id LIMIT :limit OFFSET :offset";
+        $sql .= " ORDER BY {$sort} {$order} LIMIT {$limit} OFFSET {$offset}";
     
         $stmt = $this->db->prepare($sql);
 
@@ -87,44 +135,12 @@ class Product {
             $stmt->bindValue($key, $value);
         }
         
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-        
         $stmt->execute();
+
         $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return $products;
     }
-    // public function searchProducts($currentPage =1, $keyword = null, $category = null) {
-
-    //     $offset = ($currentPage - 1) * 10;
-    //     $limit = 10;
-        
-    //     $sql = "SELECT * FROM products WHERE 1=1";
-    //     $stmt = $this->db->prepare($sql);
-
-    //     if (!empty($keyword)) {
-    //         $sql .= " AND name LIKE :keyword";
-    //         $stmt->bindParam('keyword', $keyword, PDO::PARAM_STR);
-    //     }
-
-    //     if (!empty($category)) {
-    //         $sql .= " AND category = :category";
-    //         $stmt->bindParam('category', $category, PDO::PARAM_STR);
-    //     }
-
-    //     // $countSql = str_replace("SELECT *", "SELECT COUNT(*) as count", $sql);
-    //     // $countStmt = $this->db->prepare($countSql);
-    //     // $countStmt->execute($params);
-    //     // $totalCount = $countStmt->fetch(PDO::FETCH_ASSOC)['count'];
-
-    //     $sql .= " ORDER BY id DESC LIMIT :limit OFFSET :offset";
-    //     $stmt->bindParam('limit', $limit, PDO::PARAM_INT);
-    //     $stmt->bindParam('offset', $offset, PDO::PARAM_INT);
-        
-    //     $stmt->execute();
-    //     return $stmt->fetchAll();
-    // }
 
     public function create($data) {
         try {

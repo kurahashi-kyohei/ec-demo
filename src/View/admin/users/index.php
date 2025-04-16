@@ -48,7 +48,6 @@
                             <th>姓</th>
                             <th>名</th>
                             <th>電話番号</th>
-                            <th>住所</th>
                             <th>ステータス</th>
                             <th>作成日</th>
                             <th>操作</th>
@@ -62,7 +61,6 @@
                                 <td><?php echo htmlspecialchars($user['last_name']); ?></td>
                                 <td><?php echo htmlspecialchars($user['first_name']); ?></td>
                                 <td><?php echo htmlspecialchars($user['phone_number'] ?? '未設定'); ?></td>
-                                <td><?php echo htmlspecialchars($user['address'] ?? '未設定'); ?></td>
                                 <td>
                                     <span class="status-badge status-badge--<?php echo $user['status']; ?>">
                                         <?php echo $user['status'] === 'active' ? '有効' : '無効'; ?>

@@ -127,6 +127,11 @@ class UserController
         $lastName = $_POST['last_name'] ?? '';
         $phoneNumber = $_POST['phone_number'] ?? '';
         $address = $_POST['address'] ?? '';
+        $cardNumber = $_POST['card_number'] ?? '';
+        $cardHolder = $_POST['card_holder'] ?? '';
+        $cardExpiry = $_POST['card_expiry'] ?? '';
+        $cardCvv = $_POST['card_cvv'] ?? '';
+        $cardBrand = $_POST['card_brand'] ?? '';
         $role = $_POST['role'] ?? 'user';
         $status = $_POST['status'] ?? 'active';
 
@@ -151,6 +156,11 @@ class UserController
             'last_name' => $lastName,
             'phone_number' => $phoneNumber,
             'address' => $address,
+            'card_number' => $cardNumber,
+            'card_holder' => $cardHolder,
+            'card_expiry' => $cardExpiry,
+            'card_cvv' => $cardCvv,
+            'card_brand' => $cardBrand,
             'role' => $role,
             'status' => $status,
         ]);

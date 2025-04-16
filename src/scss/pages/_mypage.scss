@@ -115,6 +115,23 @@
                 background-color: color.adjust(red, $lightness: -10%);
             }
         }
+
+        &--card {
+            background-color: $secondary-color;
+            color: $white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            
+            &:hover {
+                background-color: darken($secondary-color, 10%);
+            }
+
+            i {
+                font-size: 1.2rem;
+            }
+        }
     }
 
     &__empty {
@@ -140,6 +157,13 @@
                 background-color: color.adjust(red, $lightness: -10%);
             }
         }
+    }
+
+    &__card-registration {
+        margin-top: 2rem;
+        text-align: center;
+        padding-top: 1rem;
+        border-top: 1px solid black;
     }
 
     // フォームスタイル

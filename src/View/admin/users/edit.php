@@ -50,8 +50,38 @@
         </div>
 
         <div class="form-group">
-            <label for="address" class="form-group__label">住所（任意）</label>
+            <label for="address" class="form-group__label">住所</label>
             <textarea id="address" name="address" class="form-group__input"><?= htmlspecialchars($user['address'] ?? '') ?></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="card_number" class="form-group__label">クレジットカード番号</label>
+            <input type="text" id="card_number" name="card_number" class="form-group__input" 
+                   value="<?= htmlspecialchars($user['card_number'] ?? '') ?>" required>
+        </div>
+
+        <div class="form-group">
+            <label for="card_holder" class="form-group__label">クレジットカード名義人</label>
+            <input type="text" id="card_holder" name="card_holder" class="form-group__input" 
+                   value="<?= htmlspecialchars($user['card_holder'] ?? '') ?>" required>
+        </div>
+
+        <div class="form-group">
+            <label for="card_expiry" class="form-group__label">クレジットカード有効期限</label>
+            <input type="text" id="card_expiry" name="card_expiry" class="form-group__input" 
+                   value="<?= htmlspecialchars($user['card_expiry'] ?? '') ?>" required>
+        </div>
+
+        <div class="form-group">
+            <label for="card_cvv" class="form-group__label">クレジットカードセキュリティコード</label>
+            <input type="text" id="card_cvv" name="card_cvv" class="form-group__input" 
+                   value="<?= htmlspecialchars($user['card_cvv'] ?? '') ?>" required>
+        </div>
+
+        <div class="form-group">
+            <label for="card_brand" class="form-group__label">クレジットカードブランド</label>
+            <input type="text" id="card_brand" name="card_brand" class="form-group__input" 
+                   value="<?= htmlspecialchars($user['card_brand'] ?? '') ?>" required>
         </div>
 
         <div class="form-group">

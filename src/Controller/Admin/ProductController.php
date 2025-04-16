@@ -31,31 +31,51 @@ class ProductController
 
     public function index()
     {
-        $currentPage = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
-        $perPage = 10;
-
-        $totalProducts = $this->productModel->getTotalProducts();
-        $totalPages = ceil($totalProducts / $perPage);
-        $offset = ($currentPage - 1) * $perPage;
-
-        $keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : null;
-        $category = isset($_GET['category']) ? $_GET['category'] : null;
-
-        $products = $this->productModel->searchProducts($currentPage, $keyword, $category);
-        $categories = $this->productModel->getCategories();
-        
-        $data = [
-            'title' => '商品管理',
-            'products' => $products,
-            'categories' => $categories,
-            'currentPage' => $currentPage,
-            'totalPages' => $totalPages,
-            'perPage' => $perPage,
-            'totalProducts' => $totalProducts
-        ];
-
-        extract($data);
-        require __DIR__ . '/../../View/admin/products/index.php';
+        try {
+            // ソートパラメータの取得
+            $sort = $_GET['sort'] ?? 'id';
+            $order = $_GET['order'] ?? 'asc';
+            
+            // 現在のページ番号を取得
+            $currentPage = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+            $perPage = 30;
+            
+            // 検索パラメータの取得
+            $totalProducts = $this->productModel->getTotalProducts();
+            $totalPages = ceil($totalProducts / $perPage);
+            $offset = ($currentPage - 1) * $perPage;
+            $keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : null;
+            $category = isset($_GET['category']) ? $_GET['category'] : null;
+            
+            // 商品データの取得
+            $products = $this->productModel->searchProducts($currentPage, $keyword, $category, $sort, $order);
+            // $products = $this->productModel->searchProducts($currentPage, $keyword, $category);
+            $categories = $this->productModel->getCategories();
+            
+            // 総商品数とページ数の計算
+            $totalProducts = $this->productModel->getTotalProducts();
+            $totalPages = ceil($totalProducts / $perPage);
+            
+            $data = [
+                'title' => '商品管理',
+                'products' => $products,
+                'categories' => $categories,
+                'currentPage' => $currentPage,
+                'totalPages' => $totalPages,
+                'perPage' => $perPage,
+                'totalProducts' => $totalProducts,
+                'currentSort' => $sort,
+                'currentOrder' => $order,
+                'totalProducts' => $totalProducts
+            ];
+            
+            extract($data);
+            require __DIR__ . '/../../View/admin/products/index.php';
+            
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            require __DIR__ . '/../../View/error/500.php';
+        }
     }
 
     public function create()
@@ -76,14 +96,18 @@ class ProductController
         $stock = $_POST['stock'] ?? 0;
         $category = $_POST['category'] ?? '';
 
-        // バリデーション
         if (empty($name) || empty($description) || empty($category)) {
             $_SESSION['error'] = '必須項目を入力してください。';
             header('Location: /admin/products/create');
             exit();
         }
 
-        // 画像のアップロード処理
+        if($this->productModel->findByName($name)) {
+            $_SESSION['error'] = '同じ商品名が存在します。';
+            header('Location: /admin/products/create');
+            exit();
+        }
+
         $imagePath = '';
         try {
             if (isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
@@ -116,9 +140,6 @@ class ProductController
         }
     }
 
-    /**
-     * CSVファイルから商品データをインポート
-     */
     public function importCsv()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -135,7 +156,6 @@ class ProductController
         $tmpName = $_FILES['csv_file']['tmp_name'];
         
         try {
-            // CSVファイルを読み込む
             $data = CsvUtil::readCsv($tmpName);
             
             // デバッグ情報
@@ -152,6 +172,12 @@ class ProductController
             
             // バリデーション実行
             $errors = CsvUtil::validateCsvData($data, $rules);
+
+            if($this->productModel->findByName($data['name'])) {
+                $_SESSION['error'] = '同じ商品名が存在します。';
+                header('Location: /admin/products');
+                exit();
+            }
             
             if (!empty($errors)) {
                 error_log('Validation Errors: ' . print_r($errors, true));

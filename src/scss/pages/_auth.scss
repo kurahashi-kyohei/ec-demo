@@ -1,5 +1,5 @@
-@use "sass:color";
 @use "../base/variables" as *;
+@use "sass:color";
 
 .auth {
     padding: 4rem $container-padding;
@@ -58,7 +58,64 @@
         }
     }
 
-    &__register, &__login {
+    &__divider {
+        position: relative;
+        text-align: center;
+        margin: 2rem 0;
+
+        &::before,
+        &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: calc(50% - 30px);
+            height: 1px;
+            background-color: black;
+        }
+
+        &::before {
+            left: 0;
+        }
+
+        &::after {
+            right: 0;
+        }
+
+        span {
+            background-color: $white;
+            padding: 0 1rem;
+            color: black;
+            font-size: 0.9rem;
+        }
+    }
+
+    &__social-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        width: 100%;
+        padding: 0.75rem;
+        background-color: $white;
+        border: 1px solid black;
+        border-radius: 8px;
+        color: $text-color;
+        text-decoration: none;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: background-color 0.3s;
+
+        &:hover {
+            background-color: color.adjust($white, $lightness: -3%);
+        }
+
+        img {
+            width: 20px;
+            height: 20px;
+        }
+    }
+
+    &__register {
         text-align: center;
         margin-top: 1.5rem;
         font-size: 0.95rem;
@@ -96,13 +153,6 @@
             outline: none;
             border-color: $secondary-color;
         }
-    }
-
-    &__help {
-        display: block;
-        margin-top: 0.5rem;
-        font-size: 0.85rem;
-        color: $gray-dark;
     }
 }
 
