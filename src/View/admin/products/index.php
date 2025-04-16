@@ -59,12 +59,52 @@
                                         <input class="form-check-input" type="checkbox" id="selectAll">
                                     </div>
                                 </th>
-                                <th style="width: 80px">ID</th>
+                                <th style="width: 80px">
+                                    <?php
+                                    $idOrder = ($currentSort === 'id' && $currentOrder === 'asc') ? 'desc' : 'asc';
+                                    $idIcon = ($currentSort === 'id') ? ($currentOrder === 'asc' ? '↑' : '↓') : '↕';
+                                    ?>
+                                    <a href="?sort=id&order=<?= $idOrder ?><?= isset($_GET['keyword']) ? '&keyword=' . htmlspecialchars($_GET['keyword']) : '' ?><?= isset($_GET['category']) ? '&category=' . htmlspecialchars($_GET['category']) : '' ?>" class="text-dark">
+                                        ID <?= $idIcon ?>
+                                    </a>
+                                </th>
                                 <th style="width: 120px">画像</th>
-                                <th>商品名</th>
-                                <th style="width: 120px">価格</th>
-                                <th style="width: 100px">在庫数</th>
-                                <th style="width: 120px">登録日</th>
+                                <th>
+                                    <?php
+                                    $nameOrder = ($currentSort === 'name' && $currentOrder === 'asc') ? 'desc' : 'asc';
+                                    $nameIcon = ($currentSort === 'name') ? ($currentOrder === 'asc' ? '↑' : '↓') : '↕';
+                                    ?>
+                                    <a href="?sort=name&order=<?= $nameOrder ?><?= isset($_GET['keyword']) ? '&keyword=' . htmlspecialchars($_GET['keyword']) : '' ?><?= isset($_GET['category']) ? '&category=' . htmlspecialchars($_GET['category']) : '' ?>" class="text-dark">
+                                        商品名 <?= $nameIcon ?>
+                                    </a>
+                                </th>
+                                <th style="width: 120px">
+                                    <?php
+                                    $priceOrder = ($currentSort === 'price' && $currentOrder === 'asc') ? 'desc' : 'asc';
+                                    $priceIcon = ($currentSort === 'price') ? ($currentOrder === 'asc' ? '↑' : '↓') : '↕';
+                                    ?>
+                                    <a href="?sort=price&order=<?= $priceOrder ?><?= isset($_GET['keyword']) ? '&keyword=' . htmlspecialchars($_GET['keyword']) : '' ?><?= isset($_GET['category']) ? '&category=' . htmlspecialchars($_GET['category']) : '' ?>" class="text-dark">
+                                        価格 <?= $priceIcon ?>
+                                    </a>
+                                </th>
+                                <th style="width: 100px">
+                                    <?php
+                                    $stockOrder = ($currentSort === 'stock' && $currentOrder === 'asc') ? 'desc' : 'asc';
+                                    $stockIcon = ($currentSort === 'stock') ? ($currentOrder === 'asc' ? '↑' : '↓') : '↕';
+                                    ?>
+                                    <a href="?sort=stock&order=<?= $stockOrder ?><?= isset($_GET['keyword']) ? '&keyword=' . htmlspecialchars($_GET['keyword']) : '' ?><?= isset($_GET['category']) ? '&category=' . htmlspecialchars($_GET['category']) : '' ?>" class="text-dark">
+                                        在庫数 <?= $stockIcon ?>
+                                    </a>
+                                </th>
+                                <th style="width: 120px">
+                                    <?php
+                                    $dateOrder = ($currentSort === 'created_at' && $currentOrder === 'asc') ? 'desc' : 'asc';
+                                    $dateIcon = ($currentSort === 'created_at') ? ($currentOrder === 'asc' ? '↑' : '↓') : '↕';
+                                    ?>
+                                    <a href="?sort=created_at&order=<?= $dateOrder ?><?= isset($_GET['keyword']) ? '&keyword=' . htmlspecialchars($_GET['keyword']) : '' ?><?= isset($_GET['category']) ? '&category=' . htmlspecialchars($_GET['category']) : '' ?>" class="text-dark">
+                                        登録日 <?= $dateIcon ?>
+                                    </a>
+                                </th>
                                 <th style="width: 160px">操作</th>
                             </tr>
                         </thead>
@@ -95,7 +135,7 @@
                                         <div class="fw-bold"><?php echo htmlspecialchars($product['name']); ?></div>
                                         <div class="small text-muted"><?php echo htmlspecialchars($product['category']); ?></div>
                                     </td>
-                                    <td>¥<?php echo number_format($product['price']); ?></td>
+                                    <td>¥<?php echo number_format((int)$product['price']); ?></td>
                                     <td>
                                         <span class="stock-badge <?= $product['stock'] < 5 ? 'stock-badge--low' : '' ?>">
                                             <?= $product['stock'] ?>

@@ -1,0 +1,100 @@
+@use "../base/variables" as *;
+@use "../base/mixins" as *;
+@use "sass:color";
+
+.card-registration {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+
+    &__title {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        color: $primary-color;
+        text-align: center;
+    }
+
+    &__section {
+        background-color: $white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(black, 0.1);
+    }
+
+    .form {
+        &-group {
+            margin-bottom: 1.5rem;
+
+            label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: 600;
+                color: $text-color;
+            }
+
+            input,
+            select {
+                width: 100%;
+                padding: 0.75rem;
+                border: 1px solid black;
+                border-radius: 4px;
+                font-size: 1rem;
+
+                &:focus {
+                    outline: none;
+                    border-color: $primary-color;
+                    box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+                }
+            }
+
+            &--half {
+                width: calc(50% - 0.5rem);
+            }
+        }
+
+        &-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        &-text {
+            display: block;
+            margin-top: 0.25rem;
+            font-size: 0.875rem;
+            color: black;
+        }
+    }
+
+    &__buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        justify-content: center;
+    }
+
+    &__button {
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        background-color: $primary-color;
+        color: $white;
+
+        &:hover {
+            background-color: darken($primary-color, 10%);
+            transform: translateY(-2px);
+        }
+
+        &--cancel {
+            background-color:  red;
+
+            &:hover {
+                background-color: darken(red, 10%);
+            }
+        }
+    }
+} 

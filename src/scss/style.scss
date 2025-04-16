@@ -22,6 +22,7 @@
 @use "pages/admin-users";
 @use "pages/admin-orders";
 @use "pages/error";
+@use "pages/card-registration";
 
 // Components
 @use "components/product-thumbnail";
@@ -134,5 +135,11 @@ body {
     &-center { align-items: center; }
     &-start { align-items: flex-start; }
     &-end { align-items: flex-end; }
+}
+
+.g-recaptcha {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
 }
 

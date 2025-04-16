@@ -4,13 +4,30 @@ namespace App\Controller;
 
 use App\Model\User;
 use App\Middleware\SessionMiddleware;
+use Google_Client;
+use Google_Service_Oauth2;
 
 class AuthController {
     private $userModel;
+    private $client;
 
     public function __construct() {
         SessionMiddleware::start();
         $this->userModel = new User();
+
+        $clientId = $_ENV['GOOGLE_CLIENT_ID'];
+        $clientSecret = $_ENV['GOOGLE_CLIENT_SECRET'];
+        $appUrl = $_ENV['APP_URL'];
+
+        $this->client = new Google_Client();
+        $this->client->setClientId($clientId);
+        $this->client->setClientSecret($clientSecret);
+        
+        $redirectUri = rtrim($appUrl, '/') . '/auth/google/callback';
+        $this->client->setRedirectUri($redirectUri);
+        
+        $this->client->addScope('email');
+
     }
 
     public function showLoginForm() {
@@ -29,8 +46,63 @@ class AuthController {
         require __DIR__ . '/../View/auth/register.php';
     }
 
+    private function verifyRecaptcha($recaptchaResponse, $action) {
+        if (empty($recaptchaResponse)) {
+            error_log('reCAPTCHA Error: Empty response');
+            return false;
+        }
+
+        $url = 'https://www.google.com/recaptcha/api/siteverify';
+        $data = [
+            'secret' => $_ENV['RECAPTCHA_SECRET_KEY'],
+            'response' => $recaptchaResponse
+        ];
+
+        $options = [
+            'http' => [
+                'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+                'method' => 'POST',
+                'content' => http_build_query($data)
+            ]
+        ];
+
+        try {
+            $context = stream_context_create($options);
+            $result = file_get_contents($url, false, $context);
+            $response = json_decode($result);
+
+            // デバッグ情報の出力
+            error_log('reCAPTCHA Response: ' . print_r($response, true));
+
+            if (!$response->success) {
+                error_log('reCAPTCHA Error: ' . json_encode($response));
+                return false;
+            }
+
+            // スコアの検証（0.3以上を有効とする - 開発環境用に閾値を下げる）
+            if ($response->score < 0.3) {
+                error_log('reCAPTCHA Score Too Low: ' . $response->score);
+                return false;
+            }
+
+            return true;
+
+        } catch (\Exception $e) {
+            error_log('reCAPTCHA Verification Error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
     public function register() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            require __DIR__ . '/../View/auth/register.php';
+            return;
+        }
+
+        // reCAPTCHA v3の検証
+        $recaptchaResponse = $_POST['recaptcha_response'] ?? '';
+        if (!$this->verifyRecaptcha($recaptchaResponse, 'register')) {
+            $_SESSION['error'] = '不正なアクセスと判断されました。もう一度お試しください。';
             require __DIR__ . '/../View/auth/register.php';
             return;
         }
@@ -116,17 +188,26 @@ class AuthController {
         }
 
         $user = $this->userModel->findByEmail($email);
-        if ($user['status'] === '無効') {
-            $_SESSION['error'] = 'このメールアドレスは無効です。';
+        
+        if (!$user) {
+            $_SESSION['error'] = 'メールアドレスまたはパスワードが正しくありません。';
             header('Location: /login');
             return;
         }
-        if ($user && $this->userModel->verifyPassword($password, $user['password'])) {
-            SessionMiddleware::regenerate(); // セッションIDを再生成
+
+        if ($user['status'] === '無効') {
+            $_SESSION['error'] = 'このアカウントは無効になっています。';
+            header('Location: /login');
+            return;
+        }
+
+        if ($this->userModel->verifyPassword($password, $user['password'])) {
+            SessionMiddleware::regenerate();
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['last_name'] . ' ' . $user['first_name'];
-            $_SESSION['role'] = $user['role']; // ロールをセッションに保存
+            $_SESSION['role'] = $user['role'];
             header('Location: /mypage');
+            exit;
         } else {
             $_SESSION['error'] = 'メールアドレスまたはパスワードが正しくありません。';
             header('Location: /login');
@@ -135,6 +216,7 @@ class AuthController {
 
     public function logout() {
         session_destroy();
+
         header('Location: /');
         exit;
     }
@@ -160,5 +242,68 @@ class AuthController {
             $_SESSION['error'] = 'このメールアドレスは登録されていません。';
         }
         header('Location: /forgot-password');
+    }
+
+    public function redirectToGoogle()
+    {
+        try {            
+            $authUrl = $this->client->createAuthUrl();
+            header('Location: ' . filter_var($authUrl, FILTER_SANITIZE_URL));
+            exit;
+        } catch (\Exception $e) {
+            $_SESSION['error'] = 'Google認証の準備中にエラーが発生しました：' . $e->getMessage();
+            header('Location: /login');
+            exit;
+        }
+    }
+
+    public function handleGoogleCallback()
+    {
+        try {
+            if (!isset($_GET['code'])) {
+                throw new \Exception('認証コードが見つかりません。');
+            }
+
+            $token = $this->client->fetchAccessTokenWithAuthCode($_GET['code']);
+            
+            if (isset($token['error'])) {
+                throw new \Exception($token['error_description'] ?? 'トークンの取得に失敗しました。');
+            }
+
+            $this->client->setAccessToken($token);
+
+            $google_oauth = new Google_Service_Oauth2($this->client);
+            $google_account_info = $google_oauth->userinfo->get();
+
+            $email = $google_account_info->email;
+            $user = $this->userModel->findByEmail($email);
+
+            if (!$user) {
+                $userData = [
+                    'email' => $email,
+                    'first_name' => $google_account_info->givenName ?? '',
+                    'last_name' => $google_account_info->familyName ?? '',
+                    'password' => bin2hex(random_bytes(32)),
+                    'is_social_login' => true
+                ];
+
+                $userId = $this->userModel->createUser($userData);
+                $user = $this->userModel->findById($userId);
+            }
+
+            SessionMiddleware::regenerate();
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['last_name'] . ' ' . $user['first_name'];
+            $_SESSION['role'] = $user['role'];
+
+            header('Location: /mypage');
+            exit;
+
+        } catch (\Exception $e) {
+            error_log('Google OAuth Error: ' . $e->getMessage());
+            $_SESSION['error'] = 'Googleログインに失敗しました：' . $e->getMessage();
+            header('Location: /login');
+            exit;
+        }
     }
 } 

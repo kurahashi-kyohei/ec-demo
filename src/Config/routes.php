@@ -10,7 +10,7 @@ use App\Controller\Admin\ProductController as AdminProductController;
 use App\Controller\Admin\OrderController as AdminOrderController;
 use App\Controller\Admin\UserController as AdminUserController;
 use App\Controller\Admin\DashboardController as AdminDashboardController;
-
+use App\Controller\SocialAuthController;
 $router = new Router();
 
 // ホームページ
@@ -55,6 +55,15 @@ $router->post('/logout', function() {
     $controller->logout();
 });
 
+$router->get('/auth/google', function() {
+    $controller = new AuthController();
+    $controller->redirectToGoogle();
+});
+
+$router->get('/auth/google/callback', function() {
+    $controller = new AuthController();
+    $controller->handleGoogleCallback();
+});
 // マイページ関連
 $router->get('/mypage', function() {
     $controller = new MyPageController;
@@ -64,6 +73,16 @@ $router->get('/mypage', function() {
 $router->get('/mypage/edit', function() {
     $controller = new MyPageController;
     $controller->edit();
+});
+
+$router->get('/mypage/card/register', function() {
+    $controller = new MyPageController;
+    $controller->cardRegister();
+});
+
+$router->post('/mypage/card/store', function() {
+    $controller = new MyPageController;
+    $controller->cardStore();
 });
 
 $router->post('/mypage/update', function() {

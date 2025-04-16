@@ -56,6 +56,11 @@ class User {
                     last_name = :last_name, 
                     phone_number = :phone_number,
                     address = :address,
+                    card_number = :card_number,
+                    card_holder = :card_holder,
+                    card_expiry = :card_expiry,
+                    card_cvv = :card_cvv,
+                    card_brand = :card_brand,
                     role = :role,
                     status = :status,
                     updated_at = NOW()";
@@ -72,6 +77,11 @@ class User {
             ':last_name' => $data['last_name'],
             ':phone_number' => $data['phone_number'],
             ':address' => $data['address'],
+            ':card_number' => $data['card_number'],
+            ':card_holder' => $data['card_holder'],
+            ':card_expiry' => $data['card_expiry'],
+            ':card_cvv' => $data['card_cvv'],
+            ':card_brand' => $data['card_brand'],
             ':role' => $data['role'],
             ':status' => $data['status']
         ];
@@ -123,8 +133,14 @@ class User {
         return $stmt->execute([$email, $id]);
     }
 
-    public function verifyPassword($password, $hashedPassword) {
-        return password_verify($password, $hashedPassword);
+    public function verifyPassword($inputPassword, $hashedPassword)
+    {
+        try {
+            return password_verify($inputPassword, $hashedPassword);
+        } catch (\Exception $e) {
+            error_log('Error verifying password: ' . $e->getMessage());
+            return false;
+        }
     }
 
     public function createPasswordReset($email) {
@@ -207,5 +223,40 @@ class User {
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function updateUser($userId, $data)
+    {
+        try {
+            $updateFields = [];
+            $params = [':user_id' => $userId];
+
+            // 更新するフィールドの設定
+            foreach ($data as $key => $value) {
+                if ($value !== null) {
+                    $updateFields[] = "{$key} = :{$key}";
+                    $params[":{$key}"] = $value;
+                }
+            }
+
+            if (empty($updateFields)) {
+                return false;
+            }
+
+            $sql = "UPDATE users SET " . implode(', ', $updateFields) . " WHERE id = :user_id";
+            
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute($params);
+
+        } catch (PDOException $e) {
+            error_log('Error updating user: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function createCard($userId, $data) {
+        $sql = "UPDATE users SET card_number = ?, card_holder = ?, card_expiry = ?, card_cvv = ?, card_brand = ? WHERE id = ?";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$data['card_number'], $data['card_holder'], $data['card_expiry'], $data['card_cvv'], $data['card_brand'], $userId]);
     }
 } 

@@ -150,4 +150,34 @@ class MyPageController {
             exit();
         }
     }
+
+    public function cardRegister() {
+        $user = $this->userModel->findById($_SESSION['user_id']);
+
+        require __DIR__ . '/../View/mypage/card/register.php';
+    }
+
+    public function cardStore() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /mypage/card/register');
+            return;
+        }
+        
+        $data = [
+            'card_number' => $_POST['card_number'] ?? '',
+            'card_holder' => $_POST['card_holder'] ?? '',
+            'card_expiry' => $_POST['card_expiry'] ?? '',
+            'card_cvv' => $_POST['card_cvv'] ?? '',
+            'card_brand' => $_POST['card_brand'] ?? ''
+        ];
+        
+        if ($this->userModel->createCard($_SESSION['user_id'], $data)) {
+            $_SESSION['success'] = 'クレジットカードを登録しました。';
+            header('Location: /mypage');
+        } else {
+            $_SESSION['error'] = 'クレジットカードの登録に失敗しました。';
+            header('Location: /mypage/card/register');
+        }
+
+    }
 } 
