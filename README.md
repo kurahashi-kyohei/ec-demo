@@ -68,8 +68,14 @@ erDiagram
         int id PK
         string name
         string email
+        int phone_number
         string password
         string address
+        int card_number
+        int card_holder
+        int card_expiry
+        int card_brand
+        int card_cvv
         datetime created_at
         datetime updated_at
     }
@@ -91,7 +97,6 @@ erDiagram
         int id PK
         int user_id FK
         int total_amount
-        string status
         datetime order_date
         datetime created_at
         datetime updated_at
