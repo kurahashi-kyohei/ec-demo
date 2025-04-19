@@ -66,7 +66,8 @@ erDiagram
     users ||--o{ orders : places
     users {
         int id PK
-        string name
+        string first_name
+        string last_name
         string email
         int phone_number
         string password
@@ -83,6 +84,7 @@ erDiagram
     products ||--o{ order_details : contains
     products {
         int id PK
+        int category_id
         string name
         text description
         int price
