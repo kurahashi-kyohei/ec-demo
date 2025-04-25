@@ -41,7 +41,7 @@
         </div>
 
         <div class="form-group">
-            <label for="phone_number" class="form-group__label">電話番号（必須）</label>
+            <label for="phone_number" class="form-group__label">電話番号</label>
             <input type="tel" id="phone_number" name="phone_number" class="form-group__input" 
                    value="<?= htmlspecialchars($user['phone_number'] ?? '') ?>" 
                    pattern="[0-9-]{10,}"
@@ -57,31 +57,31 @@
         <div class="form-group">
             <label for="card_number" class="form-group__label">クレジットカード番号</label>
             <input type="text" id="card_number" name="card_number" class="form-group__input" 
-                   value="<?= htmlspecialchars($user['card_number'] ?? '') ?>" required>
+                   value="<?= htmlspecialchars($user['card_number'] ?? '') ?>">
         </div>
 
         <div class="form-group">
             <label for="card_holder" class="form-group__label">クレジットカード名義人</label>
             <input type="text" id="card_holder" name="card_holder" class="form-group__input" 
-                   value="<?= htmlspecialchars($user['card_holder'] ?? '') ?>" required>
+                   value="<?= htmlspecialchars($user['card_holder'] ?? '') ?>">
         </div>
 
         <div class="form-group">
             <label for="card_expiry" class="form-group__label">クレジットカード有効期限</label>
             <input type="text" id="card_expiry" name="card_expiry" class="form-group__input" 
-                   value="<?= htmlspecialchars($user['card_expiry'] ?? '') ?>" required>
+                   value="<?= htmlspecialchars($user['card_expiry'] ?? '') ?>">
         </div>
 
         <div class="form-group">
             <label for="card_cvv" class="form-group__label">クレジットカードセキュリティコード</label>
             <input type="text" id="card_cvv" name="card_cvv" class="form-group__input" 
-                   value="<?= htmlspecialchars($user['card_cvv'] ?? '') ?>" required>
+                   value="<?= htmlspecialchars($user['card_cvv'] ?? '') ?>">
         </div>
 
         <div class="form-group">
             <label for="card_brand" class="form-group__label">クレジットカードブランド</label>
             <input type="text" id="card_brand" name="card_brand" class="form-group__input" 
-                   value="<?= htmlspecialchars($user['card_brand'] ?? '') ?>" required>
+                   value="<?= htmlspecialchars($user['card_brand'] ?? '') ?>">
         </div>
 
         <div class="form-group">

@@ -49,7 +49,6 @@ class ProductController
             
             // 商品データの取得
             $products = $this->productModel->searchProducts($currentPage, $keyword, $category, $sort, $order);
-            // $products = $this->productModel->searchProducts($currentPage, $keyword, $category);
             $categories = $this->productModel->getCategories();
             
             // 総商品数とページ数の計算
@@ -80,8 +79,11 @@ class ProductController
 
     public function create()
     {
+        $categories = $this->productModel->getCategories();
+
         $data = [
-            'title' => '商品登録'
+            'title' => '商品登録',
+            'categories' => $categories
         ];
 
         extract($data);
@@ -126,7 +128,7 @@ class ProductController
             'price' => $price,
             'stock' => $stock,
             'image_path' => $imagePath,
-            'category' => $category
+            'category_id' => $category
         ]);
 
         if ($result) {
@@ -140,7 +142,152 @@ class ProductController
         }
     }
 
-    public function importCsv()
+    // public function importCsv()
+    // {
+    //     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    //         header('Location: /admin/products/products');
+    //         exit();
+    //     }
+
+    //     if (isset($_POST['update_existing']) && isset($_POST['csv_file'])) {
+    //         try {
+    //             $csvContent = base64_decode($_POST['csv_file']);
+    //             if ($csvContent === false) {
+    //                 throw new \Exception('Base64デコードに失敗しました。');
+    //             }
+    //             // 一時ファイルを作成
+    //             $tmpName = tempnam(sys_get_temp_dir(), 'csv_');
+    //             if (file_put_contents($tmpName, $csvContent) === false) {
+    //                 throw new \Exception('一時ファイルの作成に失敗しました。');
+    //             }
+    //         } catch (\Exception $e) {
+    //             error_log('CSV Import Error: ' . $e->getMessage());
+    //             $_SESSION['error'] = 'CSVデータの処理に失敗しました。';
+    //             header('Location: /admin/products');
+    //             exit();
+    //         }
+    //     } else if (!isset($_FILES['csv_file']) || $_FILES['csv_file']['error'] !== UPLOAD_ERR_OK) {
+    //         $_SESSION['error'] = 'CSVファイルのアップロードに失敗しました。';
+    //         header('Location: /admin/products');
+    //         exit();
+    //     } else {
+    //         $tmpName = $_FILES['csv_file']['tmp_name'];
+    //     }
+
+    //     try {
+    //         $data = CsvUtil::readCsv($tmpName);
+            
+    //         // バリデーションルール
+    //         $rules = [
+    //             'name' => ['required'],
+    //             'description' => ['required'],
+    //             'price' => ['required', 'numeric'],
+    //             'stock' => ['required', 'numeric'],
+    //             'category_id' => ['required', 'numeric']
+    //         ];
+            
+    //         // バリデーション実行
+    //         $errors = CsvUtil::validateCsvData($data, $rules);
+            
+    //         if (!empty($errors)) {
+    //             error_log('Validation Errors: ' . print_r($errors, true));
+    //             $_SESSION['error'] = implode("<br>", $errors);
+    //             header('Location: /admin/products');
+    //             exit();
+    //         }
+
+    //         $shouldUpdate = isset($_POST['update_existing']) && $_POST['update_existing'] === 'true';
+
+    //         // 重複チェック（更新フラグがfalseの場合のみ）
+    //         if (!$shouldUpdate) {
+    //             $duplicates = [];
+    //             foreach ($data as $row) {
+    //                 if ($this->productModel->findByName($row['name'])) {
+    //                     $duplicates[] = $row['name'];
+    //                 }
+    //             }
+
+    //             if (!empty($duplicates)) {
+    //                 $_SESSION['duplicates'] = $duplicates;
+    //                 $_SESSION['csv_data'] = base64_encode(file_get_contents($tmpName));
+    //                 header('Location: /admin/products?show_update_dialog=true');
+    //                 exit();
+    //             }
+    //         }
+
+    //         $success = 0;
+    //         $updated = 0;
+    //         $failed = 0;
+
+    //         foreach ($data as $row) {
+    //             try {
+    //                 $existingProduct = $this->productModel->findByName($row['name']);
+                    
+    //                 if ($existingProduct) {
+    //                     // 既存商品の更新
+    //                     $result = $this->productModel->update($existingProduct['id'], [
+    //                         'name' => $row['name'],
+    //                         'description' => $row['description'],
+    //                         'price' => $row['price'],
+    //                         'stock' => $row['stock'],
+    //                         'category_id' => $row['category_id'],
+    //                         'image_path' => $row['image_path'] ?? $existingProduct['image_path']
+    //                     ]);
+                        
+    //                     if ($result) {
+    //                         $updated++;
+    //                         error_log("Updated product: {$row['name']}");
+    //                     } else {
+    //                         $failed++;
+    //                         error_log("Failed to update product: {$row['name']}");
+    //                     }
+    //                 } else {
+    //                     // 新規商品の登録
+    //                     $result = $this->productModel->create([
+    //                         'name' => $row['name'],
+    //                         'description' => $row['description'],
+    //                         'price' => $row['price'],
+    //                         'stock' => $row['stock'],
+    //                         'category_id' => $row['category_id'],
+    //                         'image_path' => $row['image_path'] ?? null
+    //                     ]);
+                        
+    //                     if ($result) {
+    //                         $success++;
+    //                         error_log("Created new product: {$row['name']}");
+    //                     } else {
+    //                         $failed++;
+    //                         error_log("Failed to create product: {$row['name']}");
+    //                     }
+    //                 }
+    //             } catch (\Exception $e) {
+    //                 $failed++;
+    //                 error_log('Exception while processing product: ' . $e->getMessage());
+    //                 error_log('Product data: ' . print_r($row, true));
+    //             }
+    //         }
+            
+    //         // 一時ファイルを削除
+    //         if (isset($tmpName) && file_exists($tmpName)) {
+    //             unlink($tmpName);
+    //         }
+            
+    //         // 結果メッセージの設定
+    //         if ($failed > 0) {
+    //             $_SESSION['warning'] = "処理結果: 新規登録 {$success}件、更新 {$updated}件、失敗 {$failed}件";
+    //         } else {
+    //             $_SESSION['success'] = "処理結果: 新規登録 {$success}件、更新 {$updated}件";
+    //         }
+            
+    //     } catch (\Exception $e) {
+    //         error_log('CSV Import Error: ' . $e->getMessage());
+    //         $_SESSION['error'] = 'CSVのインポート中にエラーが発生しました。';
+    //     }
+        
+    //     header('Location: /admin/products');
+    //     exit();
+    // }
+    public function importCsv() 
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: /admin/products');
@@ -158,26 +305,23 @@ class ProductController
         try {
             $data = CsvUtil::readCsv($tmpName);
             
-            // デバッグ情報
             error_log('CSV Data: ' . print_r($data, true));
             
-            // バリデーションルール
             $rules = [
                 'name' => ['required'],
                 'description' => ['required'],
                 'price' => ['required', 'numeric'],
                 'stock' => ['required', 'numeric'],
-                'category' => ['required']
+                'category_id' => ['required']
             ];
             
-            // バリデーション実行
             $errors = CsvUtil::validateCsvData($data, $rules);
 
-            if($this->productModel->findByName($data['name'])) {
-                $_SESSION['error'] = '同じ商品名が存在します。';
-                header('Location: /admin/products');
-                exit();
-            }
+            // if($this->productModel->findByName($data['name'])) {
+            //     $_SESSION['error'] = '同じ商品名が存在します。';
+            //     header('Location: /admin/products');
+            //     exit();
+            // }
             
             if (!empty($errors)) {
                 error_log('Validation Errors: ' . print_r($errors, true));
@@ -186,29 +330,38 @@ class ProductController
                 exit();
             }
             
-            // データをインポート
             $success = 0;
+            $updated = 0;
             $failed = 0;
+
             foreach ($data as $row) {
+                $existingProduct = $this->productModel->findByName($row['name']);
                 try {
-                    $result = $this->productModel->create([
-                        'name' => $row['name'],
-                        'description' => $row['description'],
-                        'price' => $row['price'],
-                        'stock' => $row['stock'],
-                        'category' => $row['category'],
-                        'image_path' => $row['image_path'] ?? null
-                    ]);
-                    
-                    if ($result) {
-                        $success++;
+                    if($this->productModel->isExist($row['name'])) {
+                        $this->productModel->update($existingProduct['id'], [
+                            'name' => $row['name'],
+                            'description' => $row['description'],
+                            'price' => $row['price'],
+                            'stock' => $row['stock'],
+                            'category_id' => $row['category_id'],
+                            'image_path' => $row['image_path'] ?? null
+                        ]);
+                        $updated++;
+
                     } else {
-                        $failed++;
-                        error_log('Failed to create product: ' . print_r($row, true));
+                        $this->productModel->create([
+                            'name' => $row['name'],
+                            'description' => $row['description'],
+                            'price' => $row['price'],
+                            'stock' => $row['stock'],
+                            'category_id' => $row['category_id'],
+                            'image_path' => $row['image_path'] ?? null
+                        ]);
+                        $success++;
                     }
                 } catch (\Exception $e) {
                     $failed++;
-                    error_log('Exception while creating product: ' . $e->getMessage());
+                    error_log('Exception while processing product: ' . $e->getMessage());
                     error_log('Product data: ' . print_r($row, true));
                 }
             }
@@ -216,7 +369,7 @@ class ProductController
             if ($failed > 0) {
                 $_SESSION['warning'] = "{$success}件の商品を登録しました。{$failed}件の登録に失敗しました。";
             } else {
-                $_SESSION['success'] = "{$success}件の商品を登録しました。";
+                $_SESSION['success'] = "{$success}件の商品を登録しました。{$updated}件の商品を更新しました。";
             }
         } catch (\Exception $e) {
             error_log('CSV Import Error: ' . $e->getMessage());
@@ -226,6 +379,7 @@ class ProductController
         header('Location: /admin/products');
         exit();
     }
+
 
     /**
      * 商品データをCSVファイルとしてエクスポート
@@ -246,7 +400,7 @@ class ProductController
                     'description' => mb_convert_encoding($product['description'], 'UTF-8', 'auto'),
                     'price' => $product['price'],
                     'stock' => $product['stock'],
-                    'category' => mb_convert_encoding($product['category'], 'UTF-8', 'auto'),
+                    'category_id' => $product['category_id'],
                     'image_path' => $product['image_path'],
                     'created_at' => $product['created_at'],
                     'updated_at' => $product['updated_at']
@@ -254,7 +408,7 @@ class ProductController
             }
             
             // CSVヘッダー
-            $headers = ['id', 'name', 'description', 'price', 'stock', 'category', 'image_path', 'created_at', 'updated_at'];
+            $headers = ['id', 'name', 'description', 'price', 'stock', 'category_id', 'image_path', 'created_at', 'updated_at'];
             
             // 一時ファイルを作成
             $tempFile = tempnam(sys_get_temp_dir(), 'products_');
@@ -270,7 +424,7 @@ class ProductController
                 }
                 
                 // ダウンロード用ヘッダーを設定
-                header('Content-Type: text/csv; charset=Shift_JIS');
+                header('Content-Type: text/csv; charset=UTF-8');
                 header('Content-Disposition: attachment; filename="products_' . date('Ymd_His') . '.csv"');
                 header('Content-Length: ' . $fileSize);
                 header('Cache-Control: no-cache, no-store, must-revalidate');
@@ -297,6 +451,7 @@ class ProductController
     public function edit($id)
     {
         $product = $this->productModel->findById($id);
+        $categories = $this->productModel->getCategories();
         
         if (!$product) {
             $_SESSION['error'] = '商品が見つかりませんでした。';
@@ -306,7 +461,8 @@ class ProductController
 
         $data = [
             'title' => '商品編集',
-            'product' => $product
+            'product' => $product,
+            'categories' => $categories
         ];
 
         extract($data);

@@ -25,8 +25,8 @@ class ProductController {
 
         $keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : null;
         $category = isset($_GET['category']) ? $_GET['category'] : null;
-        
-        $products = $this->productModel->searchProducts($currentPage, $keyword, $category);
+        $sort = isset($_GET['sort']) ? $_GET['sort'] : 'id';
+        $products = $this->productModel->searchProducts($currentPage, $keyword, $category, $sort);
         $categories = $this->productModel->getCategories();
 
         $data = [

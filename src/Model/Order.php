@@ -4,6 +4,7 @@ namespace App\Model;
 
 use App\Config\Database;
 use PDO;
+use PDOException;
 
 class Order {
     private $db;
@@ -86,9 +87,11 @@ class Order {
             SELECT 
                 od.*,
                 p.name,
-                p.image_path
+                p.image_path,
+                c.name as category_name
             FROM order_details od
             JOIN products p ON od.product_id = p.id
+            JOIN categories c ON p.category_id = c.id
             WHERE od.order_id = :order_id
         ");
         $stmt->bindValue(':order_id', $id, PDO::PARAM_INT);
@@ -202,6 +205,96 @@ class Order {
         ");
         $stmt->bindValue(':keyword', '%' . $keyword . '%', PDO::PARAM_STR);
         $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getMonthlySales($year = null) {
+        $year = $year ?? date('Y');
+        $sql = "
+            SELECT 
+                DATE_FORMAT(order_date, '%Y-%m') as date,
+                COUNT(*) as order_count,
+                SUM(total_amount) as total_amount,
+                COUNT(DISTINCT user_id) as unique_customers
+            FROM orders 
+            WHERE YEAR(order_date) = :year
+            GROUP BY DATE_FORMAT(order_date, '%Y-%m')
+            ORDER BY date ASC
+        ";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':year' => $year]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getProductSales($year = null) {
+        $year = $year ?? date('Y');
+        $sql = "
+            SELECT 
+                p.id,
+                p.name,
+                SUM(od.quantity) as total_quantity,
+                SUM(od.quantity * od.price) as total_amount
+            FROM order_details od
+            JOIN orders o ON od.order_id = o.id
+            JOIN products p ON od.product_id = p.id
+            WHERE YEAR(o.order_date) = :year
+            GROUP BY p.id, p.name
+            ORDER BY total_amount DESC
+            LIMIT 10
+        ";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':year' => $year]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getCategorySales($year = null) {
+        $year = $year ?? date('Y');
+        $sql = "
+            SELECT 
+                c.name as category_name,
+                COUNT(DISTINCT o.id) as order_count,
+                SUM(od.quantity * od.price) as total_amount
+            FROM order_details od
+            JOIN orders o ON od.order_id = o.id
+            JOIN products p ON od.product_id = p.id
+            JOIN categories c ON p.category_id = c.id
+            WHERE YEAR(o.order_date) = :year
+            GROUP BY c.id, c.name
+            ORDER BY total_amount DESC
+            LIMIT 10
+        ";
+        
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([':year' => $year]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log('Error in getCategorySales: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getUserSales($year = null) {
+        $year = $year ?? date('Y');
+        $sql = "
+            SELECT 
+                u.id,
+                u.first_name,
+                u.last_name,
+                u.email,
+                SUM(o.total_amount) as total_amount
+            FROM orders o
+            JOIN users u ON o.user_id = u.id
+            WHERE YEAR(o.order_date) = :year
+            GROUP BY u.id, u.email
+            ORDER BY total_amount DESC
+            LIMIT 10
+        ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':year' => $year]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 } 

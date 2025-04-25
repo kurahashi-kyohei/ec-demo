@@ -52,7 +52,6 @@ class UserController
     {
         $email = $_POST['email'] ?? '';
         $phoneNumber = $_POST['phone_number'] ?? '';
-        $address = $_POST['address'] ?? '';
         $password = $_POST['password'] ?? '';
         $firstName = $_POST['first_name'] ?? '';
         $lastName = $_POST['last_name'] ?? '';
@@ -75,7 +74,6 @@ class UserController
             'email' => $email,
             'password' => $password,
             'phone_number' => $phoneNumber,
-            'address' => $address,
             'first_name' => $firstName,
             'last_name' => $lastName,
             'role' => $role,
