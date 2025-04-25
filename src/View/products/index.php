@@ -20,15 +20,22 @@
                 <div class="products__search-category">
                     <select name="category" class="category-select">
                         <option value="">すべてのカテゴリー</option>
-                        <?php foreach ($categories as $cat): ?>
-                            <option value="<?= htmlspecialchars($cat) ?>" 
-                                    <?= ($cat === ($_GET['category'] ?? '')) ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($cat) ?>
+                        <?php foreach ($categories as $category): ?>
+                            <option value="<?= htmlspecialchars($category['id']) ?>" 
+                                    <?= ($category['id'] === ($_GET['category'] ?? '')) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($category['name']) ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
                 <button type="submit" class="button search-button">検索する</button>
+
+                <div class="products__search-sort">
+                    <select name="sort" class="sort-select">
+                        <option value="id">新着順</option>
+                        <option value="price">価格順</option>
+                    </select>
+                </div>
             </form>
         </div>
 

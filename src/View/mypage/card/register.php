@@ -12,13 +12,13 @@
                     pattern="\d{4}-\d{4}-\d{4}-\d{4}" 
                     placeholder="1234-5678-9012-3456" 
                     required>
-                <small class="form-text">ハイフン区切りで入力してください</small>
             </div>
 
             <div class="form-group">
                 <label for="card_holder">カード名義人</label>
                 <input type="text" id="card_holder" name="card_holder" 
                     value="<?php echo $user['card_holder'] ?? ''; ?>"
+                    pattern="^[a-zA-Z\s]+$"
                     placeholder="TARO YAMADA" 
                     required>
                 <small class="form-text">ローマ字で入力してください</small>

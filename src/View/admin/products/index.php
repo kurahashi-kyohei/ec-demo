@@ -36,10 +36,10 @@
                     <div class="products__search-category">
                         <select name="category" class="category-select">
                             <option value="">すべてのカテゴリー</option>
-                            <?php foreach ($categories as $cat): ?>
-                                <option value="<?= htmlspecialchars($cat) ?>" 
-                                        <?= ($cat === ($_GET['category'] ?? '')) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($cat) ?>
+                            <?php foreach ($categories as $category): ?>
+                                <option value="<?= htmlspecialchars($category['id']) ?>" 
+                                        <?= ($category['id'] === ($_GET['category'] ?? '')) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($category['name']) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -133,7 +133,9 @@
                                     </td>
                                     <td>
                                         <div class="fw-bold"><?php echo htmlspecialchars($product['name']); ?></div>
-                                        <div class="small text-muted"><?php echo htmlspecialchars($product['category']); ?></div>
+                                        <div class="small text-muted">
+                                            <?php echo htmlspecialchars($product['category_name'] ?? '未分類'); ?>
+                                        </div>
                                     </td>
                                     <td>¥<?php echo number_format((int)$product['price']); ?></td>
                                     <td>
@@ -221,6 +223,32 @@
     </div>
 </div>
 
+<div class="modal" id="updateConfirmModal" style="display: none;">
+    <div class="modal__content">
+        <h2>商品の更新確認</h2>
+        <p>以下の商品が既に存在します：</p>
+        <ul id="duplicatesList" class="modal__list">
+            <?php
+            if (isset($_SESSION['duplicates'])) {
+                foreach ($_SESSION['duplicates'] as $name) {
+                    echo "<li>" . htmlspecialchars($name) . "</li>";
+                }
+                unset($_SESSION['duplicates']);
+            }
+            ?>
+        </ul>
+        <p>これらの商品を更新しますか？</p>
+        <div class="modal__buttons">
+            <form action="/admin/products/import-csv" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="update_existing" value="true">
+                <input type="hidden" name="csv_file" id="csvFileData">
+                <button type="submit" class="button button--primary">更新する</button>
+                <button type="button" class="button button--secondary" onclick="closeModal()">キャンセル</button>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const selectAllCheckbox = document.getElementById('selectAll');
@@ -261,5 +289,22 @@ document.addEventListener('DOMContentLoaded', function() {
             this.submit();
         }
     });
+
+    // URLパラメータでダイアログ表示を制御
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('show_update_dialog') === 'true') {
+        document.getElementById('updateConfirmModal').style.display = 'block';
+        
+        // CSVデータを復元
+        <?php if (isset($_SESSION['csv_data'])): ?>
+        document.getElementById('csvFileData').value = <?php echo json_encode($_SESSION['csv_data']); ?>;
+        <?php unset($_SESSION['csv_data']); endif; ?>
+    }
 });
+
+function closeModal() {
+    document.getElementById('updateConfirmModal').style.display = 'none';
+    // URLパラメータをクリア
+    window.history.replaceState({}, document.title, window.location.pathname);
+}
 </script>

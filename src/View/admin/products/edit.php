@@ -32,10 +32,9 @@
                 <label for="category" class="product-form__label">カテゴリー</label>
                 <select id="category" name="category" class="product-form__input" required>
                     <option value="">カテゴリーを選択</option>
-                    <option value="ミノー" <?= $product['category'] === 'ミノー' ? 'selected' : '' ?>>ミノー</option>
-                    <option value="スプーン" <?= $product['category'] === 'スプーン' ? 'selected' : '' ?>>スプーン</option>
-                    <option value="スピナー" <?= $product['category'] === 'スピナー' ? 'selected' : '' ?>>スピナー</option>
-                    <option value="その他" <?= $product['category'] === 'その他' ? 'selected' : '' ?>>その他</option>
+                    <?php foreach ($categories as $category): ?>
+                        <option value="<?= $category['id'] ?>" <?= $product['category_id'] == $category['id'] ? 'selected' : '' ?>><?= htmlspecialchars($category['name']) ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
 
@@ -76,4 +75,6 @@
             </div>
         </form>
     </div>
+
+    <div></div>
 </div>

@@ -28,8 +28,8 @@ class User {
     }
 
     public function create($data) {
-        $sql = "INSERT INTO users (email, password, first_name, last_name, phone_number, address, role, status, created_at, updated_at) 
-                VALUES (:email, :password, :first_name, :last_name, :phone_number, :address, :role, :status, NOW(), NOW())";
+        $sql = "INSERT INTO users (email, password, first_name, last_name, phone_number, role, status, created_at, updated_at) 
+                VALUES (:email, :password, :first_name, :last_name, :phone_number, :role, :status, NOW(), NOW())";
         
         try {
             $stmt = $this->db->prepare($sql);
@@ -39,7 +39,6 @@ class User {
                 ':first_name' => $data['first_name'],
                 ':last_name' => $data['last_name'],
                 ':phone_number' => $data['phone_number'],
-                ':address' => $data['address'],
                 ':role' => $data['role'] ?? 'user',
                 ':status' => $data['status'] ?? 'active'
             ]);
@@ -50,45 +49,53 @@ class User {
     }
 
     public function update($id, $data) {
-        $sql = "UPDATE users 
-                SET email = :email, 
-                    first_name = :first_name, 
-                    last_name = :last_name, 
-                    phone_number = :phone_number,
-                    address = :address,
-                    card_number = :card_number,
-                    card_holder = :card_holder,
-                    card_expiry = :card_expiry,
-                    card_cvv = :card_cvv,
-                    card_brand = :card_brand,
-                    role = :role,
-                    status = :status,
-                    updated_at = NOW()";
+        // 必須フィールドのベースSQL
+        $sql = "UPDATE users SET 
+                email = :email, 
+                first_name = :first_name, 
+                last_name = :last_name, 
+                phone_number = :phone_number,
+                role = :role,
+                status = :status,
+                updated_at = NOW()";
 
-
-        $sql .= " WHERE id = :id";
-        
-        $stmt = $this->db->prepare($sql);
-        
+        // パラメータの初期化
         $params = [
             ':id' => $id,
             ':email' => $data['email'],
             ':first_name' => $data['first_name'],
             ':last_name' => $data['last_name'],
             ':phone_number' => $data['phone_number'],
-            ':address' => $data['address'],
-            ':card_number' => $data['card_number'],
-            ':card_holder' => $data['card_holder'],
-            ':card_expiry' => $data['card_expiry'],
-            ':card_cvv' => $data['card_cvv'],
-            ':card_brand' => $data['card_brand'],
             ':role' => $data['role'],
             ':status' => $data['status']
         ];
 
+        // オプションフィールドの処理
+        $optionalFields = [
+            'address',
+            'card_number',
+            'card_holder',
+            'card_expiry',
+            'card_cvv',
+            'card_brand'
+        ];
 
+        foreach ($optionalFields as $field) {
+            if (isset($data[$field]) && $data[$field] !== '') {
+                $sql .= ", {$field} = :{$field}";
+                $params[":{$field}"] = $data[$field];
+            }
+        }
 
-        return $stmt->execute($params);
+        $sql .= " WHERE id = :id";
+        
+        try {
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute($params);
+        } catch (PDOException $e) {
+            error_log('Error updating user: ' . $e->getMessage());
+            return false;
+        }
     }
 
     public function delete($id) {

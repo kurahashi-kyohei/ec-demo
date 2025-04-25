@@ -178,6 +178,16 @@ $router->get('/admin', function() {
     $controller->index();
 });
 
+$router->get('/admin/dashboard', function() {
+    $controller = new AdminDashboardController();
+    $controller->index();
+});
+
+$router->get('/api/admin/dashboard/stats', function() {
+    $controller = new AdminDashboardController();
+    $controller->getStats();
+});
+
 // 管理画面商品管理
 $router->get('/admin/products', function() {
     $controller = new AdminProductController();

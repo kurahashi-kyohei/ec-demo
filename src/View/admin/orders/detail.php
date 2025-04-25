@@ -52,6 +52,9 @@
                                         <span class="order-item__name">
                                             <?= htmlspecialchars($item['name']) ?>
                                         </span>
+                                        <span class="order-item__category">
+                                            <?= htmlspecialchars($item['category_name']) ?>
+                                        </span>
                                     </td>
                                     <td>¥<?= number_format($item['price']) ?></td>
                                     <td><?= $item['quantity'] ?></td>

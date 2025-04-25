@@ -799,6 +799,12 @@ z .hero__overlay {
   outline: none;
   border-color: var(--color-primary);
 }
+.products__search-sort .sort-select {
+  padding: 0.8rem 2rem 0.8rem 1rem;
+  margin-left: 2rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+}
 .products__empty {
   text-align: center;
   padding: 3rem 0;
@@ -1972,6 +1978,135 @@ z .hero__overlay {
   padding: 1.5rem 2rem;
 }
 
+.dashboard {
+  padding: 2rem;
+}
+.dashboard__title {
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  font-weight: bold;
+}
+.dashboard__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+.dashboard__stat-card {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.dashboard__stat-card h3 {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+.dashboard__stat-number {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 0;
+}
+.dashboard__chart-filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.dashboard__chart-filters h1 {
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  font-weight: bold;
+}
+.dashboard__chart-filters .form-select {
+  padding: 0.5rem 2rem 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath fill='%23666' d='M0 2l4 4 4-4z'/%3E%3C/svg%3E") no-repeat right 0.75rem center/8px 8px;
+  appearance: none;
+}
+.dashboard__chart-filters:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+.dashboard__charts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+@media (max-width: 1200px) {
+  .dashboard__charts {
+    grid-template-columns: 1fr;
+  }
+}
+.dashboard__chart-card {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 400px;
+}
+.dashboard__chart-card:first-child {
+  grid-column: 1/-1;
+  height: 300px;
+}
+.dashboard__chart-card canvas {
+  width: 100% !important;
+  height: calc(100% - 60px) !important;
+}
+.dashboard__chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.dashboard__chart-header h2 {
+  font-size: 1.2rem;
+  margin: 0;
+}
+.dashboard__chart-filters {
+  display: flex;
+  gap: 1rem;
+  align-self: flex-end;
+  justify-self: flex-end;
+}
+.dashboard .form-select {
+  padding: 0.5rem 2rem 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath fill='%23666' d='M0 2l4 4 4-4z'/%3E%3C/svg%3E") no-repeat right 0.75rem center/8px 8px;
+  appearance: none;
+  font-size: 0.9rem;
+}
+.dashboard .form-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+@media (max-width: 768px) {
+  .dashboard__charts {
+    grid-template-columns: 1fr;
+  }
+  .dashboard__chart-card {
+    min-height: 300px;
+  }
+  .dashboard__chart-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .dashboard__chart-filters {
+    width: 100%;
+    flex-direction: column;
+  }
+  .dashboard__chart-filters .form-select {
+    width: 100%;
+  }
+}
 .admin-products {
   padding: 2rem 0;
 }
@@ -2225,6 +2360,42 @@ z .hero__overlay {
 
 .admin-search {
   padding: 1rem 0;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+.modal__content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 90%;
+}
+.modal__list {
+  max-height: 200px;
+  overflow-y: auto;
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.modal__buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
 }
 
 .admin-users {
